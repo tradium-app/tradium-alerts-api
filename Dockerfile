@@ -16,4 +16,4 @@ COPY --from=build /home/app/target/swing-trade-alerts-0.0.1-SNAPSHOT.jar /usr/lo
 EXPOSE 8080
 
 ENTRYPOINT ["java","-jar","/usr/local/lib/swing-trade-alerts.jar"]
-CMD "-Dserver.port","$PORT"]
+CMD ["-Dserver.port","$PORT"]
