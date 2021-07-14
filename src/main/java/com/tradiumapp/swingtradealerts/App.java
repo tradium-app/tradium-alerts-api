@@ -14,13 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.tradiumapp.swingtradealerts")
 public class App {
 
-//	@Autowired
-//	private static Rollbar rollbar;
-
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
-
-//		sampleClass.doSomething();
 	}
-
 }
