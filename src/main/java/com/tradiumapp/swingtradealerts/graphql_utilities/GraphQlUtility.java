@@ -21,7 +21,7 @@ import com.tradiumapp.swingtradealerts.dataFetchers.UserDataFetcher;
 @Component
 public class GraphQlUtility {
 
-    @Value("classpath:schemas.graphqls")
+    @Value("classpath:schemas.graphql")
     private Resource schemaResource;
     private GraphQL graphQL;
     private AllUsersDataFetcher allUsersDataFetcher;

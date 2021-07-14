@@ -1,5 +1,12 @@
 <configuration>
-    <property resource="application.properties" />
+    <define name="propExists" class="ch.qos.logback.core.property.ResourceExistsPropertyDefiner">
+        <resource>application.properties</resource>
+    </define>
+    <if condition='${propExists}'>
+        <then>
+            <property resource="application.properties" />
+        </then>
+    </if>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
