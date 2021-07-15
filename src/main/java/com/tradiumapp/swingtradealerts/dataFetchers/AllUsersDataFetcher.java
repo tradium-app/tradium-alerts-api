@@ -21,13 +21,9 @@ public class AllUsersDataFetcher implements DataFetcher<List<User>> {
 
     @Override
     public List<User> get(DataFetchingEnvironment env) {
-        User user =  env.getSource();
-        List<User> friends;
-        if(user !=null){
-            friends = userService.findByIdIn(user.friendsIds);
-        }else {
-            friends = userService.findAllUsers();
-        }
-        return friends;
+//        User user =  env.getSource();
+        List<User> users = userService.findAllUsers();
+
+        return users;
     }
 }

@@ -9,11 +9,12 @@ import java.util.List;
 @Document("users")
 public class User {
     private ObjectId id;
-
     public String name;
-    public Integer age;
-    public Date createdAt;
-    public String nationality;
-    public List<String> friendsIds;
-    public List<String> articlesIds;
+    public String authProvider;
+    public String fcmToken;
+    public String countryCode;
+    public String timeZone;
+    public String ipAddress;
+    public Date createdDate;
+    public Date modifiedDate;
 }

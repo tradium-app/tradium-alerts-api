@@ -2,23 +2,33 @@ schema {
     query : Query
 }
 
-type Query {
-    users: [User]
-    user(id: String): User
-}
-
 type User {
-    id: String
-    name: String
-    age: Int
-    nationality: String
-    createdAt: String
-    friends: [User]
-    articles: [Article]
+    id: String!
+    name: String!
+    authProvider: String
+    watchList: [Stock]
+    fcmToken: String
+    countryCode: String
+    timeZone: String
+    ipAddress: String
+    createdDate: String
+    modifiedDate: String
 }
 
-type Article {
-    id: String
-    title: String
-    minutesRead: Int
+type Stock {
+    id: String!
+    symbol: String!
+    company: String
+    price: Float
+    changePercent: Float
+    marketCap: Float
+    peRatio: Float
+    week52High: Float
+    week52Low: Float
+    ytdChangePercent: Float
+    modifiedDate: String
+}
+
+type Query {
+    getWatchList(id: String!): [Stock]
 }

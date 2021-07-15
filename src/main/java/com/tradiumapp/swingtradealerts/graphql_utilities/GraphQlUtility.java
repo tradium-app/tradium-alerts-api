@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import com.tradiumapp.swingtradealerts.dataFetchers.AllUsersDataFetcher;
-import com.tradiumapp.swingtradealerts.dataFetchers.ArticlesDataFetcher;
 import com.tradiumapp.swingtradealerts.dataFetchers.UserDataFetcher;
 
 @Component
@@ -26,16 +25,13 @@ public class GraphQlUtility {
     private GraphQL graphQL;
     private AllUsersDataFetcher allUsersDataFetcher;
     private UserDataFetcher userDataFetcher;
-    private ArticlesDataFetcher articlesDataFetcher;
 
     @Autowired
     GraphQlUtility(
-            AllUsersDataFetcher allUsersDataFetcher, UserDataFetcher userDataFetcher,
-            ArticlesDataFetcher articlesDataFetcher) throws
+            AllUsersDataFetcher allUsersDataFetcher, UserDataFetcher userDataFetcher) throws
             IOException {
         this.allUsersDataFetcher = allUsersDataFetcher;
         this.userDataFetcher = userDataFetcher;
-        this.articlesDataFetcher = articlesDataFetcher;
     }
 
     @PostConstruct
@@ -50,10 +46,8 @@ public class GraphQlUtility {
     private RuntimeWiring buildRunTimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
                 .type("Query", (typewiring) -> typewiring
-                        .dataFetcher("users", allUsersDataFetcher)
-                        .dataFetcher("user", userDataFetcher))
+                        .dataFetcher("getWatchList", userDataFetcher))
                 .type("User", typeWiring -> typeWiring
-                        .dataFetcher("articles", articlesDataFetcher)
                         .dataFetcher("friends", allUsersDataFetcher))
                 .build();
     }
