@@ -1,5 +1,6 @@
 schema {
     query : Query
+    mutation: Mutation
 }
 
 type User {
@@ -29,6 +30,15 @@ type Stock {
     modifiedDate: String
 }
 
+type Response {
+    success: Boolean
+    message: String
+}
+
 type Query {
-    getWatchList(id: String!): [Stock]
+    getWatchList(id: String!):[Stock]
+}
+
+type Mutation {
+    addStock(symbol: String):Response
 }

@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document("articles")
+@Document("stocks")
 public class Stock {
-    private ObjectId id;
+    public ObjectId id;
     public String symbol;
     public String company;
     public Float price;
