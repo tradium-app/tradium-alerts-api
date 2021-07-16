@@ -7,7 +7,7 @@ import retrofit2.http.Query;
 
 import java.util.List;
 
-public interface IexcloudService {
+public interface IexCloudService {
     @GET("/beta/ref-data/symbols")
     Call<List<Stock>> listStocks(@Query("token") String apiToken);
 }

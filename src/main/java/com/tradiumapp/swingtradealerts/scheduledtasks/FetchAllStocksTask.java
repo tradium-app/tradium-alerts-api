@@ -3,15 +3,13 @@ package com.tradiumapp.swingtradealerts.scheduledtasks;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -23,18 +21,12 @@ import java.util.List;
 public class FetchAllStocksTask {
     private static final Logger logger = LoggerFactory.getLogger(FetchAllStocksTask.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-    private IexcloudService iexService;
+
+    @Autowired
+    private IexCloudService iexService;
 
     @Value("${IEX_API_TOKEN}")
     private String iexToken;
-
-    public FetchAllStocksTask() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://cloud.iexapis.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        iexService = retrofit.create(IexcloudService.class);
-    }
 
     @Scheduled(cron = "0 */30 * * * *")
     public void fetchAllStocks() throws IOException {
