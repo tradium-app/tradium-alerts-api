@@ -9,13 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Component
-public class UserMutation2 implements GraphQLMutationResolver {
+public class WatchlistMutation implements GraphQLMutationResolver {
     @Autowired
     private UserService userService;
-    Logger logger = LoggerFactory.getLogger(UserMutation2.class);
+    Logger logger = LoggerFactory.getLogger(WatchlistMutation.class);
 
     public Response addStock(final String stock) {
         logger.info("inside addStock");
