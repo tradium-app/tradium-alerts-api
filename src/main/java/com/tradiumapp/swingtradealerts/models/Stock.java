@@ -17,6 +17,8 @@ public class Stock {
     public Float week52High;
     public Float week52Low;
     public Float ytdChangePercent;
+    public Boolean shouldRefresh;
+    public Boolean isEnabled;
     public Date createdDate;
     public Date modifiedDate;
 }
