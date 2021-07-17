@@ -11,7 +11,7 @@ public class FetchAllStocksTaskIntegrationTest extends AbstractTestNGSpringConte
     @Autowired
     private FetchAllStocksTask task
 
-    @Test
+    @Test(groups = "integration")
     void testFetchAllStocks() {
         task.fetchAllStocks();
     }

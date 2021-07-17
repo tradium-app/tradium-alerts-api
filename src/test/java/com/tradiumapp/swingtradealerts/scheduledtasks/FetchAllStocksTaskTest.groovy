@@ -38,7 +38,7 @@ public class FetchAllStocksTaskTest extends AbstractTestNGSpringContextTests {
         when(iexService.listStocks(any())).thenReturn(call)
     }
 
-    @Test
+    @Test(groups = "unit")
     void testFetchAllStocks() {
         task.fetchAllStocks();
     }
