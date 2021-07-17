@@ -1,12 +1,14 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks
 
 import com.tradiumapp.swingtradealerts.models.Stock
-import org.mockito.InjectMocks
-import org.mockito.Mock
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
-import org.testng.annotations.BeforeClass
-import org.testng.annotations.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.junit4.SpringRunner
 import retrofit2.Call
 import retrofit2.Response
 
@@ -14,15 +16,17 @@ import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
-public class FetchAllStocksTaskTest extends AbstractTestNGSpringContextTests {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = FetchAllStocksTask.class)
+public class FetchAllStocksTaskTest {
 
-    @Mock
+    @MockBean
     private IexCloudService iexService
 
-    @InjectMocks
+    @Autowired
     private FetchAllStocksTask task
 
-    @BeforeClass
+    @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this)
 
