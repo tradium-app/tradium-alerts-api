@@ -1,6 +1,7 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks
 
 import com.tradiumapp.swingtradealerts.models.Stock
+import com.tradiumapp.swingtradealerts.repositories.StockRepository
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -18,6 +19,9 @@ public class FetchAllStocksTaskTest extends AbstractTestNGSpringContextTests {
 
     @Mock
     private IexCloudService iexService
+
+    @Mock
+    private StockRepository stockRepository
 
     @InjectMocks
     private FetchAllStocksTask task
