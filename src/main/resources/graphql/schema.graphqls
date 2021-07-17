@@ -37,6 +37,7 @@ type Response {
 
 type Query {
     getWatchList(id: String!):[Stock]
+    searchStocks(searchTerm: String): [Stock]
 }
 
 type Mutation {
