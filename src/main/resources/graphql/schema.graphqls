@@ -7,6 +7,7 @@ type User {
     id: String!
     name: String!
     authProvider: String
+    imageUrl: String
     watchList: [Stock]
     fcmToken: String
     countryCode: String
@@ -33,6 +34,7 @@ type Stock {
 type Response {
     success: Boolean
     message: String
+    user: User
 }
 
 type Query {

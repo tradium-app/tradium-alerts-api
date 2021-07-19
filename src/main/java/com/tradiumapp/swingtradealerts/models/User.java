@@ -5,12 +5,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Document("users")
 public class User {
     @Id
-    private ObjectId id;
+    public ObjectId id;
+    public String firebaseUid;
     public String name;
+    public String email;
+    public String imageUrl;
+    public List<Stock> watchList;
     public String authProvider;
     public String fcmToken;
     public String countryCode;
