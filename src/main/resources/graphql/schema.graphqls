@@ -41,5 +41,6 @@ type Query {
 }
 
 type Mutation {
+    loginUser(accessToken: String): Response
     addStock(symbol: String):Response
 }
