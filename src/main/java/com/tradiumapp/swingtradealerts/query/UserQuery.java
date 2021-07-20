@@ -17,7 +17,7 @@ public class UserQuery implements GraphQLQueryResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    public List<Stock> getWatchList(String id) {
+    public List<Stock> getWatchList() {
         Stock stock1 = new Stock();
         stock1.id = ObjectId.get();
         stock1.symbol = "tsla";

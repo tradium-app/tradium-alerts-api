@@ -38,7 +38,7 @@ type Response {
 }
 
 type Query {
-    getWatchList(id: String!):[Stock]
+    getWatchList:[Stock]
     searchStocks(searchTerm: String): [Stock]
 }
 
