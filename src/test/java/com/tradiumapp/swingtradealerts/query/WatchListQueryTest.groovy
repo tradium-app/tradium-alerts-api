@@ -9,15 +9,15 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserQueryTest extends AbstractTestNGSpringContextTests {
+public class WatchListQueryTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private UserQuery userQuery
+    private StockQuery stockQuery
 
     @Test(groups = "integration")
     public void testSearchStocks() {
         String searchTerm = "TSLA"
-        List<Stock> stocks = userQuery.searchStocks(searchTerm)
+        List<Stock> stocks = stockQuery.searchStocks(searchTerm)
 
         assertTrue(stocks.size() > 1)
     }

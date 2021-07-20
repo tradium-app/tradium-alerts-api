@@ -13,30 +13,35 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 @Component
-public class WatchlistMutation implements GraphQLMutationResolver {
-    Logger logger = LoggerFactory.getLogger(WatchlistMutation.class);
+public class WatchListMutation implements GraphQLMutationResolver {
+    Logger logger = LoggerFactory.getLogger(WatchListMutation.class);
 
     @Autowired
     MongoTemplate mongoTemplate;
 
     public Response addStock(final String symbol) {
-        logger.info("Adding stock {} to a watchlist.", symbol);
+        final String symbolCap = symbol.toUpperCase(Locale.ROOT);
+        logger.info("Adding stock {} to a watchlist.", symbolCap);
 
         Query query1 = new Query();
         query1.addCriteria(Criteria.where("firebaseUid").is("6V7jHPpxTeXfUMI39HtIRGEMVv13"));
         User user = mongoTemplate.findOne(query1, User.class);
 
         Query query2 = new Query();
-        query2.addCriteria(Criteria.where("symbol").is(symbol));
+        query2.addCriteria(Criteria.where("symbol").regex(symbolCap, "i"));
         Stock stock = mongoTemplate.findOne(query2, Stock.class);
 
-        user.watchList = new ArrayList<>();
-        user.watchList.add(stock);
+        if (user.watchList == null) user.watchList = new ArrayList<>();
+        if (stock != null && !user.watchList.stream().anyMatch(s -> s.symbol.equals(symbolCap))) {
+            user.watchList.add(stock);
+            mongoTemplate.save(user);
 
-        mongoTemplate.save(user);
+            return new Response(true, "Stock added to the watchlist.");
+        }
 
-        return new Response(true, "test message");
+        return new Response(false, "Stock not added to the watchlist.");
     }
 }
