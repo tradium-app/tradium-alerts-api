@@ -31,7 +31,7 @@ public class WatchListMutation implements GraphQLMutationResolver {
         User user = mongoTemplate.findOne(query1, User.class);
 
         Query query2 = new Query();
-        query2.addCriteria(Criteria.where("symbol").regex(symbolCap, "i"));
+        query2.addCriteria(Criteria.where("symbol").is(symbolCap));
         Stock stock = mongoTemplate.findOne(query2, Stock.class);
 
         if (user.watchList == null) user.watchList = new ArrayList<>();

@@ -18,8 +18,9 @@ public class StockQuery implements GraphQLQueryResolver {
     public List<Stock> searchStocks(String searchTerm) {
         Query query = new Query();
         query.addCriteria(new Criteria().orOperator(
-                Criteria.where("symbol").regex(searchTerm, "gmi"),
-                Criteria.where("company").regex(searchTerm, "gmi")));
+                Criteria.where("symbol").regex("^" + searchTerm, "gmi"),
+                Criteria.where("company").regex("^" + searchTerm, "gmi")));
+        query.limit(10);
 
         List<Stock> stocks = mongoTemplate.find(query, Stock.class);
         return stocks;
