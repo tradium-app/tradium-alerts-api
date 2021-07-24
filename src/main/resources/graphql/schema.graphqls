@@ -31,6 +31,29 @@ type Stock {
     modifiedDate: String
 }
 
+type Alert {
+    id: String!
+    symbol: String!
+    type: String!
+    action: String
+    targetValue: Float
+    createdDate: String
+    modifiedDate: String
+}
+
+input AlertInput {
+    symbol: String!
+    type: String!
+    action: String
+    targetValue: Float
+}
+
+type Notification {
+    id: String!
+    alert: Alert
+    message: String!
+}
+
 type Response {
     success: Boolean
     message: String
@@ -40,9 +63,12 @@ type Response {
 type Query {
     getWatchList:[Stock]
     searchStocks(searchTerm: String): [Stock]
+#    getAlertConfigs(symbol: String): [Alert]
+#    getNotifications: [Notification]
 }
 
 type Mutation {
     loginUser(accessToken: String): Response
     addStock(symbol: String):Response
+    addAlert(alertInput: AlertInput): Response
 }
