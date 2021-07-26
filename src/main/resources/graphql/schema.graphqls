@@ -42,9 +42,11 @@ type Alert {
 }
 
 input AlertInput {
+    id: String
     symbol: String!
     type: String!
     action: String
+    title: String
     targetValue: Float
 }
 
@@ -71,4 +73,5 @@ type Mutation {
     loginUser(accessToken: String): Response
     addStock(symbol: String):Response
     addAlert(alertInput: AlertInput): Response
+    updateAlert(alertInput: AlertInput): Response
 }
