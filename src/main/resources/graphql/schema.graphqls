@@ -31,23 +31,35 @@ type Stock {
     modifiedDate: String
 }
 
+type TargetRange {
+    from: Float
+    to: Float
+}
+
 type Alert {
     id: String!
     symbol: String!
+    timeFrame: String!
     type: String!
     action: String
-    targetValue: Float
+    targetRange: TargetRange
     createdDate: String
     modifiedDate: String
+}
+
+input TargetRangeInput {
+    from: Float
+    to: Float
 }
 
 input AlertInput {
     id: String
     symbol: String!
+    timeFrame: String!
     type: String!
     action: String
+    targetRange: TargetRangeInput
     title: String
-    targetValue: Float
 }
 
 type Notification {

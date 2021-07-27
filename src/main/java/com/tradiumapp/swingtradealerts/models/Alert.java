@@ -8,8 +8,10 @@ public class Alert {
     public ObjectId id;
 
     public String symbol;
+    public String timeFrame;
     public String type;
     public String action;
+    public TargetRange targetRange;
     public String title;
-    public Float targetValue;
+
 }
