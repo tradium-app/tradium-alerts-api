@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -31,7 +29,7 @@ public class FetchAllStocksTask {
     @Value("${IEX_API_TOKEN}")
     private String iexToken;
 
-    @Scheduled(cron = "0 */30 * * * *")
+    @Scheduled(cron = "0 0 0 */1 * *")
     public void fetchAllStocks() throws IOException {
         Response<List<Stock>> fetchResponse = iexService.listStocks(iexToken).execute();
         if (fetchResponse.isSuccessful()) {

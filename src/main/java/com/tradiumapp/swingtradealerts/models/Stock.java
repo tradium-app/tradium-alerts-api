@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Document("stocks")
 public class Stock {
@@ -25,6 +26,7 @@ public class Stock {
     public Float ytdChangePercent;
     public Boolean shouldRefresh;
     public Boolean isEnabled;
+    public List<PriceTimestamp> priceHistory;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
