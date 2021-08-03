@@ -51,7 +51,7 @@ public class FetchQuotesTask {
             Response<HashMap<String, HashMap<String, Stock>>> response = iexService.getQuotes(symbolJoined, iexToken).execute();
 
             if(!response.isSuccessful()){
-                logger.error("Error while fetching stocks: {}", response.errorBody().toString());
+                logger.error("Error while fetching stocks: {}", response.errorBody().string());
             }
 
             List<Stock> updatedStocks = new ArrayList<>();

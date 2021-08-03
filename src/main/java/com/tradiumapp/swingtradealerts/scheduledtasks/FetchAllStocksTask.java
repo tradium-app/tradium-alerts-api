@@ -37,7 +37,7 @@ public class FetchAllStocksTask {
             stockRepository.saveAll(stocks);
             logger.info("stocks fetched: {}", stocks.get(0).company);
         } else {
-            logger.error("Error while fetching stocks: {}", fetchResponse.errorBody().toString());
+            logger.error("Error while fetching stocks: {}", fetchResponse.errorBody().string());
         }
         logger.info("The time is now {}", dateFormat.format(new Date()));
     }
