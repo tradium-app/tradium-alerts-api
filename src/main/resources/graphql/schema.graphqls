@@ -86,4 +86,5 @@ type Mutation {
     addStock(symbol: String):Response
     addAlert(alertInput: AlertInput): Response
     updateAlert(alertInput: AlertInput): Response
+    runJob(jobId: Float): Response
 }
