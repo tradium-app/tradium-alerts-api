@@ -39,7 +39,7 @@ public class FetchQuotesTask {
     @Value("${IEX_API_TOKEN}")
     private String iexToken;
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0 10-16 * * *")
     public void fetchQuotes() throws IOException {
         Query query = new Query();
         query.addCriteria(Criteria.where("shouldRefresh").is(true));
