@@ -1,5 +1,6 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
+import com.tradiumapp.swingtradealerts.models.PriceTimestamp;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import org.slf4j.Logger;
@@ -57,13 +58,12 @@ public class FetchQuotesTask {
             List<Stock> updatedStocks = new ArrayList<>();
 
             response.body().forEach((key, quote) -> {
-                Stock updatedStock = quote.get("quote");
-                updatedStock.isEnabled = true;
-                updatedStock.shouldRefresh = true;
-                updatedStock.id = stocks.stream()
-                        .filter(s -> s.symbol.equals(updatedStock.symbol))
-                        .map(s -> s.id).findAny().get();
-                updatedStocks.add(quote.get("quote"));
+                Stock stockQuote = quote.get("quote");
+
+                Stock stock = stocks.stream().filter(s -> s.symbol.equals(stockQuote.symbol)).findFirst().get();
+                if(stock.priceHistory == null) stock.priceHistory = new ArrayList<>();
+                stock.priceHistory.add(new PriceTimestamp(stockQuote.closeTime, stockQuote.close));
+                updatedStocks.add(stock);
             });
 
             stockRepository.saveAll(updatedStocks);

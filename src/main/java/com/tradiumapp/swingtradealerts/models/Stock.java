@@ -27,6 +27,8 @@ public class Stock {
     public Boolean shouldRefresh;
     public Boolean isEnabled;
     public List<PriceTimestamp> priceHistory;
+    public Float closeTime;
+    public Float close;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
