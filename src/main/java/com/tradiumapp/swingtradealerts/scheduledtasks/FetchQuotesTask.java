@@ -39,7 +39,7 @@ public class FetchQuotesTask {
     @Value("${IEX_API_TOKEN}")
     private String iexToken;
 
-    @Scheduled(cron = "0 0 10-16 * * *")
+    @Scheduled(cron = "0 0 18 * * 1-5")
     public void fetchQuotes() throws IOException {
         Query query = new Query();
         query.addCriteria(Criteria.where("shouldRefresh").is(true));
@@ -61,8 +61,8 @@ public class FetchQuotesTask {
                 Stock stockQuote = quote.get("quote");
 
                 Stock stock = stocks.stream().filter(s -> s.symbol.equals(stockQuote.symbol)).findFirst().get();
-                if(stock.priceHistory == null) stock.priceHistory = new ArrayList<>();
-                stock.priceHistory.add(new PriceTimestamp(stockQuote.closeTime, stockQuote.close));
+                if(stock.daily_priceHistory == null) stock.daily_priceHistory = new ArrayList<>();
+                stock.daily_priceHistory.add(new PriceTimestamp(stockQuote.closeTime, stockQuote.latestPrice));
                 updatedStocks.add(stock);
             });
 

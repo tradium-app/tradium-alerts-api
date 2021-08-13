@@ -26,9 +26,9 @@ public class Stock {
     public Float ytdChangePercent;
     public Boolean shouldRefresh;
     public Boolean isEnabled;
-    public List<PriceTimestamp> priceHistory;
+    public List<PriceTimestamp> daily_priceHistory;
     public Float closeTime;
-    public Float close;
+    public Float latestPrice;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
