@@ -1,5 +1,6 @@
 package com.tradiumapp.swingtradealerts.models;
 
+import com.google.gson.annotations.SerializedName;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -26,10 +27,35 @@ public class Stock {
     public Float ytdChangePercent;
     public Boolean shouldRefresh;
     public Boolean isEnabled;
-    public List<PriceTimestamp> daily_priceHistory;
+    public List<StockPrice> daily_priceHistory;
     public Float closeTime;
     public Float latestPrice;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
+
+    public class StockPrice {
+        @SerializedName(value = "symbol", alternate = "T")
+        public String symbol;
+
+        @SerializedName(value = "volume", alternate = "v")
+        public Float volume;
+
+        @SerializedName(value = "open", alternate = "o")
+        public Float open;
+
+        @SerializedName(value = "close", alternate = "c")
+        public Float close;
+
+        @SerializedName(value = "high", alternate = "h")
+        public Float high;
+
+        @SerializedName(value = "low", alternate = "l")
+        public Float low;
+
+        @SerializedName(value = "time", alternate = "t")
+        public Float time;
+    }
 }
+
+

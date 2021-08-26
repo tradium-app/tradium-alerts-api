@@ -1,8 +1,8 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
-import com.tradiumapp.swingtradealerts.models.PriceTimestamp;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
+import com.tradiumapp.swingtradealerts.services.PolygonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +12,25 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class FetchQuotesTask {
     private static final Logger logger = LoggerFactory.getLogger(FetchQuotesTask.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
-    private IexCloudService iexService;
+    private PolygonService polygonService;
+
+    @Value("${POLYGON_API_KEY}")
+    private String apiKey;
 
     @Autowired
     private StockRepository stockRepository;
@@ -36,39 +38,26 @@ public class FetchQuotesTask {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @Value("${IEX_API_TOKEN}")
-    private String iexToken;
-
     @Scheduled(cron = "0 0 18 * * 1-5")
     public void fetchQuotes() throws IOException {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("shouldRefresh").is(true));
-        query.limit(10);
-        List<Stock> stocks = mongoTemplate.find(query, Stock.class);
-        List<String> symbols = stocks.stream().map(s -> s.symbol).collect(Collectors.toList());
+        String day = dayFormat.format(new Date());
+        Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();
 
-        if (symbols.size() > 0) {
-            String symbolJoined = String.join(",", symbols);
-            Response<HashMap<String, HashMap<String, Stock>>> response = iexService.getQuotes(symbolJoined, iexToken).execute();
+        List<Stock> stocks = (List<Stock>) stockRepository.findAll();
 
-            if(!response.isSuccessful()){
-                logger.error("Error while fetching stocks: {}", response.errorBody().string());
-            }
+        List<Stock> updatedStocks = new ArrayList<>();
 
-            List<Stock> updatedStocks = new ArrayList<>();
-
-            response.body().forEach((key, quote) -> {
-                Stock stockQuote = quote.get("quote");
-
-                Stock stock = stocks.stream().filter(s -> s.symbol.equals(stockQuote.symbol)).findFirst().get();
+        response.body().results.forEach((stockPrice) -> {
+                Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+                if(!stockOptional.isPresent()) return;
+                Stock stock = stockOptional.get();
                 if(stock.daily_priceHistory == null) stock.daily_priceHistory = new ArrayList<>();
-                stock.daily_priceHistory.add(new PriceTimestamp(stockQuote.closeTime, stockQuote.latestPrice));
+                stock.daily_priceHistory.add(stockPrice);
                 updatedStocks.add(stock);
-            });
+        });
 
-            stockRepository.saveAll(updatedStocks);
+        stockRepository.saveAll(updatedStocks);
 
-            logger.info("FetchQuotesTask ran at {}", dateFormat.format(new Date()));
-        }
+        logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
     }
 }

@@ -2,6 +2,7 @@ package com.tradiumapp.swingtradealerts.scheduledtasks;
 
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
+import com.tradiumapp.swingtradealerts.services.IexCloudService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,6 +2,7 @@ package com.tradiumapp.swingtradealerts.scheduledtasks
 
 import com.tradiumapp.swingtradealerts.models.Stock
 import com.tradiumapp.swingtradealerts.repositories.StockRepository
+import com.tradiumapp.swingtradealerts.services.IexCloudService
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
