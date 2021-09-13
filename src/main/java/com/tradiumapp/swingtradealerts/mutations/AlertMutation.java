@@ -23,7 +23,7 @@ public class AlertMutation implements GraphQLMutationResolver {
     public Response addAlert(final Alert alert) {
         mongoTemplate.save(alert);
 
-        logger.info("{} {} alert on {} saved successfully.", alert.type, alert.action, alert.symbol);
+        logger.info("Alert for {} added successfully.", alert.symbol);
         return new Response(true, "Alert save successful.");
     }
 
@@ -32,16 +32,14 @@ public class AlertMutation implements GraphQLMutationResolver {
         query.addCriteria(Criteria.where("id").is(alert.id));
 
         Update update = new Update();
-        update.set("type", alert.type);
-        update.set("action", alert.action);
         update.set("title", alert.title);
-        update.set("targetRange", alert.targetRange);
+        update.set("conditions", alert.conditions);
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
         Boolean success = result.getModifiedCount() == 1;
 
         if (success) {
-            logger.info("{} {} alert on {} saved successfully.", alert.type, alert.action, alert.symbol);
+            logger.info("Alert for {} updated successfully.", alert.symbol);
             return new Response(true, "Alert updated successfully.");
         } else {
             return new Response(false, "Alert update failed.");
