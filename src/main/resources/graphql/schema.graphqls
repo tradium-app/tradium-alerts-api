@@ -58,6 +58,7 @@ input AlertInput {
     id: String
     symbol: String!
     title: String
+    status: String
     conditions: [ConditionInput]
 }
 
