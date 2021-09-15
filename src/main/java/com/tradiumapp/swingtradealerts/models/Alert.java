@@ -11,6 +11,7 @@ public class Alert {
 
     public String symbol;
     public String title;
+    public String status;
 
     public List<Condition> conditions;
 }

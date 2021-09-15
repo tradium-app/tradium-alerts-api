@@ -18,18 +18,18 @@ public class Stock {
     public String symbol;
 
     public String company;
-    public Float price;
-    public Float changePercent;
-    public Float marketCap;
-    public Float peRatio;
-    public Float week52High;
-    public Float week52Low;
-    public Float ytdChangePercent;
-    public Boolean shouldRefresh;
-    public Boolean isEnabled;
+    public float price;
+    public float changePercent;
+    public float marketCap;
+    public float peRatio;
+    public float week52High;
+    public float week52Low;
+    public float ytdChangePercent;
+    public boolean shouldRefresh;
+    public boolean isEnabled;
     public List<StockPrice> daily_priceHistory;
-    public Float closeTime;
-    public Float latestPrice;
+    public float closeTime;
+    public float latestPrice;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
@@ -39,22 +39,22 @@ public class Stock {
         public String symbol;
 
         @SerializedName(value = "volume", alternate = "v")
-        public Float volume;
+        public float volume;
 
         @SerializedName(value = "open", alternate = "o")
-        public Float open;
+        public float open;
 
         @SerializedName(value = "close", alternate = "c")
-        public Float close;
+        public float close;
 
         @SerializedName(value = "high", alternate = "h")
-        public Float high;
+        public float high;
 
         @SerializedName(value = "low", alternate = "l")
-        public Float low;
+        public float low;
 
         @SerializedName(value = "time", alternate = "t")
-        public Float time;
+        public long time;
     }
 }
 

@@ -101,6 +101,11 @@
 			<artifactId>sendgrid-java</artifactId>
 			<version>4.7.4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.ta4j</groupId>
+			<artifactId>ta4j-core</artifactId>
+			<version>0.14</version>
+		</dependency>
 	</dependencies>
 
 	<build>
