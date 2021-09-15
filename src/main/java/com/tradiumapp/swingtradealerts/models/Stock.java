@@ -54,7 +54,7 @@ public class Stock {
         public float low;
 
         @SerializedName(value = "time", alternate = "t")
-        public long time;
+        public Long time;
     }
 }
 

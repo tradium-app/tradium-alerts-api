@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +73,9 @@ public class SendAlertTask {
         for (Alert alert : alerts) {
             BarSeries series = new BaseBarSeriesBuilder().withName(alert.symbol).build();
             List<Stock.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
+            stockPrices.sort(Comparator.comparing((Stock.StockPrice o) -> o.time));
+            stockPrices.removeIf((Stock.StockPrice s) -> s.time.equals(0L));
+
             for (Stock.StockPrice stockPrice : stockPrices) {
                 Instant instant = Instant.ofEpochSecond(stockPrice.time);
                 ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
@@ -82,7 +86,7 @@ public class SendAlertTask {
             RSIIndicator rsiIndicator= new RSIIndicator(closePrice, 14);
             float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount()-1).floatValue();
             if(lastRsiValue > 40){
-                sendEmail(users.get(0), "RSI Trigger", "RSI greater than 40");
+                sendEmail(users.get(0), alert.symbol + " RSI Trigger", "RSI " + lastRsiValue + " greater than 40");
             }
         }
 
