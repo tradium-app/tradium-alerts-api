@@ -2,17 +2,12 @@ package com.tradiumapp.swingtradealerts.scheduledtasks;
 
 import com.sendgrid.Method;
 import com.sendgrid.Request;
-import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
-import com.tradiumapp.swingtradealerts.models.Alert;
-import com.tradiumapp.swingtradealerts.models.Condition;
-import com.tradiumapp.swingtradealerts.models.Stock;
-import com.tradiumapp.swingtradealerts.models.User;
+import com.tradiumapp.swingtradealerts.models.*;
 import com.tradiumapp.swingtradealerts.repositories.AlertRepository;
-import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +20,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
-import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.RSIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.num.Num;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,7 +52,7 @@ public class SendAlertTask {
 
     @Scheduled(cron = "0 0 0 */1 * *")
     public void sendAlerts() throws IOException {
-        List<Alert> alerts = (List<Alert>) alertRepository.findAll();
+        List<Alert> alerts = alertRepository.findByStatus(AlertStatus.Off);
         List<User> users = (List<User>) userRepository.findAll();
         HashMap<String, List<Stock.StockPrice>> stockPricesMap = new HashMap<>();
 
@@ -82,15 +75,28 @@ public class SendAlertTask {
                 series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
             }
 
-            ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-            RSIIndicator rsiIndicator= new RSIIndicator(closePrice, 14);
-            float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount()-1).floatValue();
-            if(lastRsiValue > 40){
-                sendEmail(users.get(0), alert.symbol + " RSI Trigger", "RSI " + lastRsiValue + " greater than 40");
+            boolean shouldAlertFire = true;
+            for (Condition condition : alert.conditions) {
+                shouldAlertFire = shouldAlertFire && isConditionMet(condition, series);
+            }
+
+            if (shouldAlertFire) {
+                sendEmail(users.get(0), alert.title, "Alert conditions met.");
             }
         }
 
         logger.info("The time is now {}", dateFormat.format(new Date()));
+    }
+
+    private boolean isConditionMet(Condition condition, BarSeries series) {
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
+        RSIIndicator rsiIndicator = new RSIIndicator(closePrice, condition.valueConfig.length);
+        float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
+        if (lastRsiValue > condition.valueConfig.value) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void sendEmail(User user, String subject, String message) throws IOException {

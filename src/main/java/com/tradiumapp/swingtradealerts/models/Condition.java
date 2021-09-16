@@ -5,9 +5,11 @@ public class Condition {
     public String indicator;
     public String timeframe;
     public String value;
+    public ValueConfig valueConfig;
 
     public class ValueConfig {
         public int length;
         public String source;
+        public float value;
     }
 }

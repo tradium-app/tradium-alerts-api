@@ -3,6 +3,7 @@ package com.tradiumapp.swingtradealerts.mutations;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.models.Alert;
+import com.tradiumapp.swingtradealerts.models.AlertStatus;
 import com.tradiumapp.swingtradealerts.models.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public class AlertMutation implements GraphQLMutationResolver {
     MongoTemplate mongoTemplate;
 
     public Response addAlert(final Alert alert) {
+        alert.status = AlertStatus.Off;
         mongoTemplate.save(alert);
 
         logger.info("Alert for {} added successfully.", alert.symbol);
