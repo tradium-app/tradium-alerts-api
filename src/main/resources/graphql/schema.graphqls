@@ -32,10 +32,17 @@ type Stock {
 }
 
 type Condition {
-    order: Float
+    order: Float!
     indicator: String!
     timeframe: String!
-    value: String!
+    value: String
+    valueConfig: ValueConfig
+}
+
+type ValueConfig {
+    length: Float
+    value: Float
+    upDirection: Boolean
 }
 
 type Alert {
@@ -47,19 +54,26 @@ type Alert {
     modifiedDate: String
 }
 
-input ConditionInput {
-    order: Float
-    indicator: String!
-    timeframe: String!
-    value: String!
-}
-
 input AlertInput {
     id: String
     symbol: String!
     title: String
     status: String
     conditions: [ConditionInput]
+}
+
+input ConditionInput {
+    order: Float
+    indicator: String!
+    timeframe: String!
+    value: String
+    valueConfig: ValueConfigInput
+}
+
+input ValueConfigInput {
+    length: Float
+    value: Float
+    upDirection: Boolean
 }
 
 type Notification {
