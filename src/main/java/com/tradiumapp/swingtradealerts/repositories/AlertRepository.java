@@ -9,5 +9,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 
 public interface AlertRepository extends PagingAndSortingRepository<Alert, ObjectId> {
-    List<Alert> findByStatus(AlertStatus status);
+    List<Alert> findByStatusNot(AlertStatus status);
 }

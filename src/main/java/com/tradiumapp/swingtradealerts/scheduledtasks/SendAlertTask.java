@@ -1,5 +1,6 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
+import com.mongodb.client.result.UpdateResult;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
@@ -28,10 +30,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class SendAlertTask {
@@ -52,7 +51,7 @@ public class SendAlertTask {
 
     @Scheduled(cron = "0 0 0 */1 * *")
     public void sendAlerts() throws IOException {
-        List<Alert> alerts = alertRepository.findByStatus(AlertStatus.Off);
+        List<Alert> alerts = alertRepository.findByStatusNot(AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();
         HashMap<String, List<Stock.StockPrice>> stockPricesMap = new HashMap<>();
 
@@ -81,8 +80,14 @@ public class SendAlertTask {
             }
 
             if (shouldAlertFire) {
-                sendEmail(users.get(0), alert.title, "Alert conditions met.");
+                if(alert.status == AlertStatus.Off){
+                    sendEmail(users.get(0), alert.title, "Alert conditions met.");
+                    alert.status = AlertStatus.On;
+                }
+            } else {
+                alert.status = AlertStatus.Off;
             }
+            updateAlert(alert, alert.status);
         }
 
         logger.info("The time is now {}", dateFormat.format(new Date()));
@@ -92,11 +97,26 @@ public class SendAlertTask {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         RSIIndicator rsiIndicator = new RSIIndicator(closePrice, condition.valueConfig.length);
         float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
-        if (lastRsiValue > condition.valueConfig.value) {
+
+        if (condition.valueConfig.upDirection && lastRsiValue > condition.valueConfig.value) {
             return true;
-        } else {
+        } if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
+            return true;
+        }
+        else {
             return false;
         }
+    }
+
+    private boolean updateAlert(Alert alert, AlertStatus status){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(alert.id));
+
+        Update update = new Update();
+        update.set("status", status);
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
+        return result.getModifiedCount() == 1;
     }
 
     private void sendEmail(User user, String subject, String message) throws IOException {

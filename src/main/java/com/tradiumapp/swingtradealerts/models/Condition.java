@@ -11,5 +11,6 @@ public class Condition {
         public int length;
         public String source;
         public float value;
+        public boolean upDirection;
     }
 }
