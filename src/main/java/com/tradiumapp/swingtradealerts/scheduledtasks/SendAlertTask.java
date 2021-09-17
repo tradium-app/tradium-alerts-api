@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class SendAlertTask {
@@ -54,17 +55,28 @@ public class SendAlertTask {
         List<Alert> alerts = alertRepository.findByStatusNot(AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();
         HashMap<String, List<Stock.StockPrice>> stockPricesMap = new HashMap<>();
+        long startEpoch = Instant.now().minusSeconds(2_592_000).toEpochMilli();
 
         for (Alert alert : alerts) {
-            Query query1 = new Query();
-            query1.addCriteria(Criteria.where("symbol").is(alert.symbol));
-            Stock stock = mongoTemplate.findOne(query1, Stock.class);
-            stockPricesMap.put(stock.symbol, stock.daily_priceHistory);
+            if (!stockPricesMap.containsKey(alert.symbol)) {
+                Query query1 = new Query();
+                Criteria criteria = new Criteria().andOperator(Criteria.where("symbol").is(alert.symbol),
+                        Criteria.where("daily_priceHistory.time").gt(startEpoch));
+                query1.addCriteria(criteria);
+                Stock stock = mongoTemplate.findOne(query1, Stock.class);
+                if (stock != null) {
+                    List stockPrices = stock.daily_priceHistory.stream()
+                            .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
+                            .collect(Collectors.toList());
+                    stockPricesMap.put(stock.symbol, stockPrices);
+                }
+            }
         }
 
         for (Alert alert : alerts) {
             BarSeries series = new BaseBarSeriesBuilder().withName(alert.symbol).build();
             List<Stock.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
+            if (stockPrices == null) break;
             stockPrices.sort(Comparator.comparing((Stock.StockPrice o) -> o.time));
             stockPrices.removeIf((Stock.StockPrice s) -> s.time.equals(0L));
 
@@ -80,7 +92,7 @@ public class SendAlertTask {
             }
 
             if (shouldAlertFire) {
-                if(alert.status == AlertStatus.Off){
+                if (alert.status == AlertStatus.Off) {
                     sendEmail(users.get(0), alert.title, "Alert conditions met.");
                     alert.status = AlertStatus.On;
                 }
@@ -100,15 +112,15 @@ public class SendAlertTask {
 
         if (condition.valueConfig.upDirection && lastRsiValue > condition.valueConfig.value) {
             return true;
-        } if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
-            return true;
         }
-        else {
+        if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
+            return true;
+        } else {
             return false;
         }
     }
 
-    private boolean updateAlert(Alert alert, AlertStatus status){
+    private boolean updateAlert(Alert alert, AlertStatus status) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alert.id));
 
