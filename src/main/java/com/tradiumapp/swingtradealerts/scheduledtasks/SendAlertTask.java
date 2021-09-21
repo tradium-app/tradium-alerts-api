@@ -106,16 +106,26 @@ public class SendAlertTask {
     }
 
     private boolean isConditionMet(Condition condition, BarSeries series) {
-        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-        RSIIndicator rsiIndicator = new RSIIndicator(closePrice, condition.valueConfig.length);
-        float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
+        try {
+            ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
+            if (condition.indicator.equals(Indicator.rsi)) {
+                RSIIndicator rsiIndicator = new RSIIndicator(closePrice, condition.valueConfig.length);
+                float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
-        if (condition.valueConfig.upDirection && lastRsiValue > condition.valueConfig.value) {
-            return true;
-        }
-        if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
-            return true;
-        } else {
+                if (condition.valueConfig.upDirection && lastRsiValue > condition.valueConfig.value) {
+                    return true;
+                } else if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (condition.indicator.equals(Indicator.stock_trend)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
             return false;
         }
     }

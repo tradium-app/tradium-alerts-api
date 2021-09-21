@@ -2,9 +2,10 @@ package com.tradiumapp.swingtradealerts.models;
 
 public class Condition {
     public int order;
-    public String indicator;
+    public Indicator indicator;
     public String timeframe;
     public String value;
+    public String valueText;
     public ValueConfig valueConfig;
 
     public class ValueConfig {
