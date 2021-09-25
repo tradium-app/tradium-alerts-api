@@ -27,35 +27,11 @@ public class Stock {
     public float ytdChangePercent;
     public boolean shouldRefresh;
     public boolean isEnabled;
-    public List<StockPrice> daily_priceHistory;
     public float closeTime;
     public float latestPrice;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
-
-    public class StockPrice {
-        @SerializedName(value = "symbol", alternate = "T")
-        public String symbol;
-
-        @SerializedName(value = "volume", alternate = "v")
-        public float volume;
-
-        @SerializedName(value = "open", alternate = "o")
-        public float open;
-
-        @SerializedName(value = "close", alternate = "c")
-        public float close;
-
-        @SerializedName(value = "high", alternate = "h")
-        public float high;
-
-        @SerializedName(value = "low", alternate = "l")
-        public float low;
-
-        @SerializedName(value = "time", alternate = "t")
-        public Long time;
-    }
 }
 
 

@@ -1,24 +1,23 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
-import com.tradiumapp.swingtradealerts.models.Stock;
-import com.tradiumapp.swingtradealerts.repositories.StockRepository;
+import com.tradiumapp.swingtradealerts.models.StockHistory;
+import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
 import com.tradiumapp.swingtradealerts.services.PolygonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FetchQuotesTask {
@@ -33,7 +32,7 @@ public class FetchQuotesTask {
     private String apiKey;
 
     @Autowired
-    private StockRepository stockRepository;
+    private StockHistoryRepository stockHistoryRepository;
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -43,20 +42,22 @@ public class FetchQuotesTask {
         String day = dayFormat.format(new Date());
         Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();
 
-        List<Stock> stocks = (List<Stock>) stockRepository.findAll();
+        List<StockHistory> stocks = (List<StockHistory>) stockHistoryRepository.findAll();
+        List<StockHistory> updatedStocks = new ArrayList<>();
 
-        List<Stock> updatedStocks = new ArrayList<>();
-
+        assert response.body().results != null;
         response.body().results.forEach((stockPrice) -> {
-                Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
-                if(!stockOptional.isPresent()) return;
-                Stock stock = stockOptional.get();
-                if(stock.daily_priceHistory == null) stock.daily_priceHistory = new ArrayList<>();
-                stock.daily_priceHistory.add(stockPrice);
-                updatedStocks.add(stock);
+            Optional<StockHistory> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+
+            StockHistory stock = stockOptional.orElseGet(StockHistory::new);
+            stock.symbol = stockPrice.symbol;
+
+            if(stock.daily_priceHistory == null) stock.daily_priceHistory = new ArrayList<>();
+            stock.daily_priceHistory.add(stockPrice);
+            updatedStocks.add(stock);
         });
 
-        stockRepository.saveAll(updatedStocks);
+        stockHistoryRepository.saveAll(updatedStocks);
 
         logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
     }

@@ -1,20 +1,16 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
 import com.mongodb.client.result.UpdateResult;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
 import com.tradiumapp.swingtradealerts.models.*;
 import com.tradiumapp.swingtradealerts.repositories.AlertRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
-import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
+import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.ConditionChecker;
+import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.EMAConditionChecker;
+import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.RSIConditionChecker;
+import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.SMAConditionChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -57,7 +53,7 @@ public class SendAlertTask {
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByStatusNot(AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();
-        HashMap<String, List<Stock.StockPrice>> stockPricesMap = new HashMap<>();
+        HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = new HashMap<>();
         long startEpoch = Instant.now().minusSeconds(2_592_000).toEpochMilli();
 
         for (Alert alert : alerts) {
@@ -66,7 +62,7 @@ public class SendAlertTask {
                 Criteria criteria = new Criteria().andOperator(Criteria.where("symbol").is(alert.symbol),
                         Criteria.where("daily_priceHistory.time").gt(startEpoch));
                 query1.addCriteria(criteria);
-                Stock stock = mongoTemplate.findOne(query1, Stock.class);
+                StockHistory stock = mongoTemplate.findOne(query1, StockHistory.class);
                 if (stock != null) {
                     List stockPrices = stock.daily_priceHistory.stream()
                             .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
@@ -78,12 +74,12 @@ public class SendAlertTask {
 
         for (Alert alert : alerts) {
             BarSeries series = new BaseBarSeriesBuilder().withName(alert.symbol).build();
-            List<Stock.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
+            List<StockHistory.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
             if (stockPrices == null) break;
-            stockPrices.sort(Comparator.comparing((Stock.StockPrice o) -> o.time));
-            stockPrices.removeIf((Stock.StockPrice s) -> s.time.equals(0L));
+            stockPrices.sort(Comparator.comparing((StockHistory.StockPrice o) -> o.time));
+            stockPrices.removeIf((StockHistory.StockPrice s) -> s.time.equals(0L));
 
-            for (Stock.StockPrice stockPrice : stockPrices) {
+            for (StockHistory.StockPrice stockPrice : stockPrices) {
                 Instant instant = Instant.ofEpochSecond(stockPrice.time);
                 ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
