@@ -50,8 +50,8 @@ public class SendAlertTask {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @Value("${SENDGRID_API_KEY}")
-    private String sendGridApiKey;
+    @Autowired
+    EmailSender emailSender;
 
     @Scheduled(cron = "0 0 0 */1 * *")
     public void sendAlerts() throws IOException {
@@ -96,7 +96,7 @@ public class SendAlertTask {
 
             if (shouldAlertFire) {
                 if (alert.status == AlertStatus.Off) {
-                    sendEmail(users.get(0), alert.title, "Alert conditions met.");
+                    sendEmail(users.get(0), alert);
                     alert.status = AlertStatus.On;
                 }
             } else {
@@ -138,21 +138,13 @@ public class SendAlertTask {
         return result.getModifiedCount() == 1;
     }
 
-    private void sendEmail(User user, String subject, String message) throws IOException {
-        Email from = new Email("info@tradiumapp.com");
-        Email to = new Email(user.email);
-        Content content = new Content("text/plain", message);
-        Mail mail = new Mail(from, subject, to, content);
-
-        SendGrid sg = new SendGrid(sendGridApiKey);
-        Request request = new Request();
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            sg.api(request);
-        } catch (IOException ex) {
-            throw ex;
+    private void sendEmail(User user, Alert alert) throws IOException {
+        String subject = alert.symbol + " : " + alert.title;
+        String message = "";
+        for(Condition condition: alert.conditions){
+            message += condition.timeframe + " " + condition.indicator.toString().toUpperCase() + " meets criteria '" + condition.valueText + "'. <br/> ";
         }
+
+        emailSender.sendEmail(user, subject, message);
     }
 }

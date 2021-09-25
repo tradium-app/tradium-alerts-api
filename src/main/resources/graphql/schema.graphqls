@@ -67,6 +67,7 @@ input ConditionInput {
     indicator: String!
     timeframe: String!
     value: String
+    valueText: String
     valueConfig: ValueConfigInput
 }
 
