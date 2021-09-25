@@ -10,6 +10,7 @@ import com.sendgrid.helpers.mail.objects.Email;
 import com.tradiumapp.swingtradealerts.models.*;
 import com.tradiumapp.swingtradealerts.repositories.AlertRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
+import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
-import org.ta4j.core.indicators.RSIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import java.io.IOException;
@@ -30,7 +30,10 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -108,22 +111,16 @@ public class SendAlertTask {
     private boolean isConditionMet(Condition condition, BarSeries series) {
         try {
             ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-            if (condition.indicator.equals(Indicator.rsi)) {
-                RSIIndicator rsiIndicator = new RSIIndicator(closePrice, condition.valueConfig.length);
-                float lastRsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
-
-                if (condition.valueConfig.upDirection && lastRsiValue > condition.valueConfig.value) {
-                    return true;
-                } else if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else if (condition.indicator.equals(Indicator.stock_trend)) {
-                return true;
+            ConditionChecker conditionChecker;
+            if (condition.indicator.equals(IndicatorType.rsi)) {
+                conditionChecker = new RSIConditionChecker();
+            } else if (condition.indicator.equals(IndicatorType.sma)) {
+                conditionChecker = new SMAConditionChecker();
             } else {
-                return false;
+                conditionChecker = new EMAConditionChecker();
             }
+
+            return conditionChecker.checkCondition(condition, closePrice);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             return false;
