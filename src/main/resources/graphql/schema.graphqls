@@ -92,7 +92,7 @@ type Response {
 type Query {
     getWatchList:[Stock]
     searchStocks(searchTerm: String): [Stock]
-#    getAlertConfigs(symbol: String): [Alert]
+    getAlerts(symbol: String): [Alert]
 #    getNotifications: [Notification]
 }
 
