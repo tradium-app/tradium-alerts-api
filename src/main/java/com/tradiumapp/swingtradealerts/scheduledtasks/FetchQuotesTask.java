@@ -1,7 +1,9 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
+import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
+import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.services.PolygonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,9 @@ public class FetchQuotesTask {
     private String apiKey;
 
     @Autowired
+    private StockRepository stockRepository;
+
+    @Autowired
     private StockHistoryRepository stockHistoryRepository;
 
     @Autowired
@@ -42,22 +47,33 @@ public class FetchQuotesTask {
         String day = dayFormat.format(new Date());
         Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();
 
-        List<StockHistory> stocks = (List<StockHistory>) stockHistoryRepository.findAll();
-        List<StockHistory> updatedStocks = new ArrayList<>();
+        List<Stock> stocks = (List<Stock>) stockRepository.findAll();
+        List<StockHistory> stockHistories = (List<StockHistory>) stockHistoryRepository.findAll();
+
+        List<Stock> updatedStocks = new ArrayList<>();
+        List<StockHistory> updatedStockHistories = new ArrayList<>();
 
         assert response.body().results != null;
         response.body().results.forEach((stockPrice) -> {
-            Optional<StockHistory> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+            Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+            Optional<StockHistory> stockHistoryOptional = stockHistories.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
 
-            StockHistory stock = stockOptional.orElseGet(StockHistory::new);
+            Stock stock = stockOptional.orElseGet(Stock::new);
+            StockHistory stockHistory = stockHistoryOptional.orElseGet(StockHistory::new);
+
             stock.symbol = stockPrice.symbol;
-
-            if(stock.daily_priceHistory == null) stock.daily_priceHistory = new ArrayList<>();
-            stock.daily_priceHistory.add(stockPrice);
+            stock.changePercent = (stockPrice.close - stock.price) * 100 / stock.price;
+            stock.price = stockPrice.close;
             updatedStocks.add(stock);
+
+            stockHistory.symbol = stockPrice.symbol;
+            if (stockHistory.daily_priceHistory == null) stockHistory.daily_priceHistory = new ArrayList<>();
+            stockHistory.daily_priceHistory.add(stockPrice);
+            updatedStockHistories.add(stockHistory);
         });
 
-        stockHistoryRepository.saveAll(updatedStocks);
+        stockRepository.saveAll(updatedStocks);
+        stockHistoryRepository.saveAll(updatedStockHistories);
 
         logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
     }
