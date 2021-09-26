@@ -1,6 +1,7 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.User;
@@ -29,8 +30,10 @@ public class WatchListMutation implements GraphQLMutationResolver {
         final String symbolCap = symbol.toUpperCase(Locale.ROOT);
         logger.info("Adding stock {} to a watchlist.", symbolCap);
 
+        String firebaseUid = PrincipalManager.getCurrentUserId();
+
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("firebaseUid").is("6V7jHPpxTeXfUMI39HtIRGEMVv13"));
+        query1.addCriteria(Criteria.where("firebaseUid").is(firebaseUid));
         User user = mongoTemplate.findOne(query1, User.class);
 
         Query query2 = new Query();
