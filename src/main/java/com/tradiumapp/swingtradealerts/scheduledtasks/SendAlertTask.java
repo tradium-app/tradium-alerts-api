@@ -8,6 +8,7 @@ import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.Conditio
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.EMAConditionChecker;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.RSIConditionChecker;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.SMAConditionChecker;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,11 @@ public class SendAlertTask {
             for (StockHistory.StockPrice stockPrice : stockPrices) {
                 Instant instant = Instant.ofEpochSecond(stockPrice.time);
                 ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
-                series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
+                try {
+                    series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
+                } catch (Exception ignore) {
+                }
+
             }
 
             boolean shouldAlertFire = true;
@@ -137,8 +142,8 @@ public class SendAlertTask {
     private void sendEmail(User user, Alert alert) throws IOException {
         String subject = alert.symbol + " : " + alert.title;
         String message = "";
-        for(Condition condition: alert.conditions){
-            message += condition.timeframe + " " + condition.indicator.toString().toUpperCase() + " meets criteria '" + condition.valueText + "'. <br/> ";
+        for (Condition condition : alert.conditions) {
+            message += StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase() + " meets criteria '" + condition.valueText + "'. <br/> ";
         }
 
         emailSender.sendEmail(user, subject, message);
