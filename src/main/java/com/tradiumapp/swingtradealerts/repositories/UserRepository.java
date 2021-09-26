@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface UserRepository extends PagingAndSortingRepository<User, ObjectId> {
     List<User> findByIdIn(List<String> ids);
+
+    User findByFirebaseUid(String firebaseUid);
 }

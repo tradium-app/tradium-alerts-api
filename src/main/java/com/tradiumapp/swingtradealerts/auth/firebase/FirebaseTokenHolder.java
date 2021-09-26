@@ -12,6 +12,10 @@ public class FirebaseTokenHolder {
 		this.token = token;
 	}
 
+	public String getUid() {
+		return token.getUid();
+	}
+
 	public String getEmail() {
 		return token.getEmail();
 	}
@@ -24,8 +28,8 @@ public class FirebaseTokenHolder {
 		return token.getName();
 	}
 
-	public String getUid() {
-		return token.getUid();
+	public String getPicture() {
+		return token.getPicture();
 	}
 
 	public String getGoogleId() {

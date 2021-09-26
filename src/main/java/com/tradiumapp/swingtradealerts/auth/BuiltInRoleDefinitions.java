@@ -2,9 +2,10 @@ package com.tradiumapp.swingtradealerts.auth;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,22 +38,22 @@ public final class BuiltInRoleDefinitions {
             PermissionDefinition.WATCHLIST_ADMIN
     );
 
-
     private static final Map<String, Set<PermissionDefinition>> ROLE_TO_PERMISSIONS = ImmutableMap.<String, Set<PermissionDefinition>>builder()
             .put(ROLE_ANONYMOUS, ANONYMOUS_USER_PERMISSIONS)
             .put(ROLE_USER, AUTHENTICATED_USER_PERMISSIONS)
             .build();
 
     @Nonnull
-    public static Set<PermissionDefinition> permissionsForRole(String role) {
+    public static Set<GrantedAuthority> getAuthoritiesForRole(String role) {
         final Set<PermissionDefinition> permissionDefinitions = ROLE_TO_PERMISSIONS.get(role);
+        Set<GrantedAuthority> authorities = new HashSet<>();
 
-        if (permissionDefinitions == null) {
-            return Collections.emptySet();
+        if(permissionDefinitions != null) {
+            for (PermissionDefinition permission : permissionDefinitions) {
+                authorities.add((GrantedAuthority) () -> permission.id);
+            }
         }
-        return permissionDefinitions;
-    }
 
-//    public static Role getRoleById(String role){
-//    }
+        return authorities;
+    }
 }

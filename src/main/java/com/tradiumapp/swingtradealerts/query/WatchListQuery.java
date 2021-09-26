@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class WatchListQuery implements GraphQLQueryResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @PreAuthorize("hasAuthority('permission.watchlist.admin')")
     public List<Stock> getWatchList() {
         Query query1 = new Query();
         query1.addCriteria(Criteria.where("firebaseUid").is("6V7jHPpxTeXfUMI39HtIRGEMVv13"));

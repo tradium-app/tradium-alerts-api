@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,11 +15,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 public class FirebaseFilter extends OncePerRequestFilter {
 
-	private static String HEADER_NAME = "X-Authorization-Tradium";
+	private static String HEADER_NAME = "x-authorization-tradium";
 
 	private FirebaseService firebaseService;
 
@@ -34,9 +33,10 @@ public class FirebaseFilter extends OncePerRequestFilter {
 
 		String xAuth = request.getHeader(HEADER_NAME);
 		if (StringUtils.isBlank(xAuth)) {
-			List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(BuiltInRoleDefinitions.ROLE_ANONYMOUS);
+			Set<GrantedAuthority> authorities = BuiltInRoleDefinitions.getAuthoritiesForRole(BuiltInRoleDefinitions.ROLE_ANONYMOUS);
 			Authentication auth = new AnonymousAuthenticationToken(BuiltInRoleDefinitions.ROLE_ANONYMOUS,BuiltInRoleDefinitions.ROLE_ANONYMOUS, authorities);
 			SecurityContextHolder.getContext().setAuthentication(auth);
+
 			filterChain.doFilter(request, response);
 		} else {
 			try {
