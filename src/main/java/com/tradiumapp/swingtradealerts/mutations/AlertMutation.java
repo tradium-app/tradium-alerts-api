@@ -1,6 +1,7 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.models.Alert;
 import com.tradiumapp.swingtradealerts.models.AlertStatus;
@@ -45,6 +46,19 @@ public class AlertMutation implements GraphQLMutationResolver {
             return new Response(true, "Alert updated successfully.");
         } else {
             return new Response(false, "Alert update failed.");
+        }
+    }
+
+    public Response deleteAlert(final String alertId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(alertId));
+        DeleteResult deleteResult = mongoTemplate.remove(query, Alert.class);
+
+        if (deleteResult.getDeletedCount() == 1) {
+            return new Response(true, "Alert delete successful.");
+        } else {
+            logger.error("Alert {} delete failed.", alertId);
+            return new Response(false, "Alert delete failed.");
         }
     }
 }
