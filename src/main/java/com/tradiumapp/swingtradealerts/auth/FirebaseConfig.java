@@ -37,9 +37,8 @@ public class FirebaseConfig {
 				.setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
 				.build();
 
-//		FirebaseOptions options = new FirebaseOptions.Builder().setServiceAccount(inputStream)
-//				.setDatabaseUrl(databaseUrl).build();
 		FirebaseApp.initializeApp(options);
-		
+
+		logger.info("FirebaseApp initialized...");
 	}
 }

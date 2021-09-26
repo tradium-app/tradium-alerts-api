@@ -3,7 +3,6 @@ package com.tradiumapp.swingtradealerts.query;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
-import com.tradiumapp.swingtradealerts.auth.firebase.FirebaseAuthenticationToken;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -23,7 +20,7 @@ public class WatchListQuery implements GraphQLQueryResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @PreAuthorize("hasAuthority('permission.watchlist.admin')")
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST_ADMIN.id)")
     public List<Stock> getWatchList() {
         String firebaseUid = PrincipalManager.getCurrentUserId();
 
