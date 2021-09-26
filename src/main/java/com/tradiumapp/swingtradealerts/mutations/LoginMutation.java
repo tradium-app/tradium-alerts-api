@@ -35,16 +35,16 @@ public class LoginMutation implements GraphQLMutationResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @PostConstruct
-    public void init() throws IOException {
-        byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountKey);
-        InputStream serviceStream =new ByteArrayInputStream(decodedBytes);
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
-                .build();
-
-        FirebaseApp.initializeApp(options);
-    }
+//    @PostConstruct
+//    public void init() throws IOException {
+//        byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountKey);
+//        InputStream serviceStream =new ByteArrayInputStream(decodedBytes);
+//        FirebaseOptions options = FirebaseOptions.builder()
+//                .setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
+//                .build();
+//
+//        FirebaseApp.initializeApp(options);
+//    }
 
     public Response loginUser(final String accessToken) throws FirebaseAuthException {
         FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(accessToken);
