@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class PrincipalManager {
     public static String getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String firebaseUid = ((org.springframework.security.core.userdetails.User) authentication.getPrincipal()).getUsername();
-        return firebaseUid;
+        String userId = ((org.springframework.security.core.userdetails.User) authentication.getPrincipal()).getUsername();
+        return userId;
     }
 }

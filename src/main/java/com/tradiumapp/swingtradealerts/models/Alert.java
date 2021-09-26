@@ -10,6 +10,7 @@ public class Alert {
     @Id
     public ObjectId id;
 
+    public String userId;
     public String symbol;
     public String title;
     public AlertStatus status;

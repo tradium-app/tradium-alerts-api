@@ -46,7 +46,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.firebaseUid;
+        return this.id.toString();
     }
 
     @Override

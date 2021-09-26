@@ -22,10 +22,10 @@ public class WatchListQuery implements GraphQLQueryResolver {
 
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST_ADMIN.id)")
     public List<Stock> getWatchList() {
-        String firebaseUid = PrincipalManager.getCurrentUserId();
+        String userId = PrincipalManager.getCurrentUserId();
 
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("firebaseUid").is(firebaseUid));
+        query1.addCriteria(Criteria.where("id").is(userId));
         User user = mongoTemplate.findOne(query1, User.class);
 
         if (user.watchList != null) {
