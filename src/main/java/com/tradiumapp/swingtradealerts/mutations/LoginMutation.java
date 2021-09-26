@@ -7,6 +7,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.tradiumapp.swingtradealerts.auth.service.UserService;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.models.User;
 import org.slf4j.Logger;
@@ -33,36 +34,42 @@ public class LoginMutation implements GraphQLMutationResolver {
     private String serviceAccountKey;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     MongoTemplate mongoTemplate;
 
-    @PostConstruct
-    public void init() throws IOException {
-        byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountKey);
-        InputStream serviceStream =new ByteArrayInputStream(decodedBytes);
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
-                .build();
-
-        FirebaseApp.initializeApp(options);
-    }
+//    @PostConstruct
+//    public void init() throws IOException {
+//        byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountKey);
+//        InputStream serviceStream =new ByteArrayInputStream(decodedBytes);
+//        FirebaseOptions options = FirebaseOptions.builder()
+//                .setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
+//                .build();
+//
+//        FirebaseApp.initializeApp(options);
+//    }
 
     public Response loginUser(final String accessToken) throws FirebaseAuthException {
-        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(accessToken);
-        String firebaseUid = decodedToken.getUid();
+        User user = userService.registerUser(accessToken);
 
-        Query query = new Query();
-        query.addCriteria(Criteria.where("firebaseUid").is(firebaseUid));
-        User user = mongoTemplate.findOne(query, User.class);
+//        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(accessToken);
+//        String firebaseUid = decodedToken.getUid();
 
-        if(user == null){
-            user = new User();
-            user.firebaseUid = firebaseUid;
-            user.name = decodedToken.getName();
-            user.email = decodedToken.getEmail();
-            user.imageUrl =  decodedToken.getPicture();
 
-            mongoTemplate.save(user);
-        }
+//        Query query = new Query();
+//        query.addCriteria(Criteria.where("firebaseUid").is(firebaseUid));
+//        User user = mongoTemplate.findOne(query, User.class);
+
+//        if(user == null){
+//            user = new User();
+//            user.firebaseUid = firebaseUid;
+//            user.name = decodedToken.getName();
+//            user.email = decodedToken.getEmail();
+//            user.imageUrl =  decodedToken.getPicture();
+//
+//            mongoTemplate.save(user);
+//        }
 
         return new Response(true, "Login successful.", user);
     }

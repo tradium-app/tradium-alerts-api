@@ -6,8 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface UserRepository extends PagingAndSortingRepository<User, ObjectId> {
+public interface RoleRepository extends PagingAndSortingRepository<User, ObjectId> {
     List<User> findByIdIn(List<String> ids);
 
-    User findByFirebaseUid(String firebaseUid);
 }
