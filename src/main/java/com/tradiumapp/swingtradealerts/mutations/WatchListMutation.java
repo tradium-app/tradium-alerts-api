@@ -35,8 +35,8 @@ public class WatchListMutation implements GraphQLMutationResolver {
         Stock stock = mongoTemplate.findOne(query2, Stock.class);
 
         if (user.watchList == null) user.watchList = new ArrayList<>();
-        if (stock != null && !user.watchList.stream().anyMatch(s -> s.symbol.equals(symbolCap))) {
-            user.watchList.add(stock);
+        if (stock != null && !user.watchList.contains(symbolCap)) {
+            user.watchList.add(symbolCap);
             mongoTemplate.save(user);
 
             return new Response(true, "Stock added to the watchlist.");

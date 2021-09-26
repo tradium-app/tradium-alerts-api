@@ -19,7 +19,7 @@ public class User {
     public String name;
     public String email;
     public String imageUrl;
-    public List<Stock> watchList;
+    public List<String> watchList;
     public String authProvider;
     public String fcmToken;
     public String countryCode;

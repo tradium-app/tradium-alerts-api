@@ -22,6 +22,10 @@ public class WatchListQuery implements GraphQLQueryResolver {
         query1.addCriteria(Criteria.where("firebaseUid").is("6V7jHPpxTeXfUMI39HtIRGEMVv13"));
         User user = mongoTemplate.findOne(query1, User.class);
 
-        return user.watchList;
+        Query query2 = new Query();
+        query2.addCriteria(Criteria.where("symbol").in(user.watchList));
+        List<Stock> stocks = mongoTemplate.find(query2, Stock.class);
+
+        return stocks;
     }
 }
