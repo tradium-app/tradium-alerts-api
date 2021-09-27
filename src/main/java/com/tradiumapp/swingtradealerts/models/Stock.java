@@ -29,9 +29,17 @@ public class Stock {
     public boolean isEnabled;
     public float closeTime;
     public float latestPrice;
+    public StockMetric metric;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
+
+    public static class StockMetric {
+        public float _52WeekHigh;
+        public float _52WeekLow;
+        public float beta;
+        public float marketCapitalization;
+    }
 }
 
 

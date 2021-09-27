@@ -5,6 +5,7 @@ import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.services.PolygonService;
+import com.tradiumapp.swingtradealerts.services.models.PolygonQuoteResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

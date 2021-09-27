@@ -1,4 +1,4 @@
-package com.tradiumapp.swingtradealerts.scheduledtasks;
+package com.tradiumapp.swingtradealerts.services.models;
 
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;

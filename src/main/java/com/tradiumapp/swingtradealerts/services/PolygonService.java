@@ -1,14 +1,10 @@
 package com.tradiumapp.swingtradealerts.services;
 
-import com.tradiumapp.swingtradealerts.models.Stock;
-import com.tradiumapp.swingtradealerts.scheduledtasks.PolygonQuoteResponse;
+import com.tradiumapp.swingtradealerts.services.models.PolygonQuoteResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
-import java.util.HashMap;
-import java.util.List;
 
 public interface PolygonService {
 
