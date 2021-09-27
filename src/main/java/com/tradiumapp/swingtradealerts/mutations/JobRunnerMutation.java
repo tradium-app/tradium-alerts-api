@@ -1,10 +1,10 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.scheduledtasks.FetchAllStocksTask;
 import com.tradiumapp.swingtradealerts.scheduledtasks.FetchQuotesTask;
 import com.tradiumapp.swingtradealerts.scheduledtasks.SendAlertTask;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

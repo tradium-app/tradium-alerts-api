@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -46,8 +47,13 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
-                    .csrf().disable()
+//            http
+//                    .csrf().disable()
+//                    .authorizeRequests().anyRequest().permitAll().and()
+//                    .addFilterAfter(tokenAuthorizationFilter(), BasicAuthenticationFilter.class);
+
+            http
+                    .addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
                     .authorizeRequests().anyRequest().permitAll();
         }
 
