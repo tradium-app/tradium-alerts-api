@@ -1,6 +1,7 @@
 package com.tradiumapp.swingtradealerts.query;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,8 +17,12 @@ public class AlertsQuery implements GraphQLQueryResolver {
     MongoTemplate mongoTemplate;
 
     public List<Alert> getAlerts(final String symbol) {
+        String userId = PrincipalManager.getCurrentUserId();
+
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("symbol").is(symbol));
+        query1.addCriteria(Criteria.where("symbol").is(symbol)
+                .andOperator(Criteria.where("userId").is(userId)));
+
         List<Alert> alerts = mongoTemplate.find(query1, Alert.class);
 
         return alerts;
