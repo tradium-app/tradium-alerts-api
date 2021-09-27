@@ -29,10 +29,10 @@ public class WatchListMutation implements GraphQLMutationResolver {
         final String symbolCap = symbol.toUpperCase(Locale.ROOT);
         logger.info("Adding stock {} to a watchlist.", symbolCap);
 
-        String firebaseUid = PrincipalManager.getCurrentUserId();
+        String userId = PrincipalManager.getCurrentUserId();
 
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("firebaseUid").is(firebaseUid));
+        query1.addCriteria(Criteria.where("id").is(userId));
         User user = mongoTemplate.findOne(query1, User.class);
 
         Query query2 = new Query();
