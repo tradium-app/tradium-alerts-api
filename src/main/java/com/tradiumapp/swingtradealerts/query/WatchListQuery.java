@@ -1,10 +1,10 @@
 
 package com.tradiumapp.swingtradealerts.query;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.User;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

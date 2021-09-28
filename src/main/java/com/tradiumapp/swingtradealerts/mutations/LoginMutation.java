@@ -1,12 +1,13 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.tradiumapp.swingtradealerts.auth.service.UserService;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.models.User;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +17,7 @@ public class LoginMutation implements GraphQLMutationResolver {
     @Autowired
     UserService userService;
 
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST_ADMIN.id)")
     public Response loginUser(final String accessToken) {
         try {
             User user = userService.registerUser(accessToken);

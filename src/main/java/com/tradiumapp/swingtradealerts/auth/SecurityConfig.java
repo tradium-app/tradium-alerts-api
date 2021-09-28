@@ -48,7 +48,8 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
                     .csrf().disable()
-                    .authorizeRequests().anyRequest().permitAll();
+                    .authorizeRequests().anyRequest().permitAll().and()
+                    .cors();
         }
 
         @Autowired(required = false)

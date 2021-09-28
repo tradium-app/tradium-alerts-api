@@ -1,5 +1,6 @@
 package com.tradiumapp.swingtradealerts.auth.firebase;
 
+import com.tradiumapp.swingtradealerts.auth.service.UserService;
 import com.tradiumapp.swingtradealerts.auth.service.exception.FirebaseUserNotExistsException;
 import com.tradiumapp.swingtradealerts.auth.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Component;
 public class FirebaseAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
-	@Qualifier(value = UserServiceImpl.NAME)
-	private UserDetailsService userService;
+//	@Qualifier(value = UserServiceImpl.NAME)
+	private UserService userService;
 
 	public boolean supports(Class<?> authentication) {
 		return (FirebaseAuthenticationToken.class.isAssignableFrom(authentication));

@@ -1,12 +1,12 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Alert;
 import com.tradiumapp.swingtradealerts.models.AlertStatus;
 import com.tradiumapp.swingtradealerts.models.Response;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
