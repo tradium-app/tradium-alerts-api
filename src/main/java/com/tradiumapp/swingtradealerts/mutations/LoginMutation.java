@@ -17,7 +17,6 @@ public class LoginMutation implements GraphQLMutationResolver {
     @Autowired
     UserService userService;
 
-    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST_ADMIN.id)")
     public Response loginUser(final String accessToken) {
         try {
             User user = userService.registerUser(accessToken);

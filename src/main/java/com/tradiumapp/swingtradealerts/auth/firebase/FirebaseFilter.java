@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class FirebaseFilter extends OncePerRequestFilter {
-	private static String HEADER_NAME = "x-authorization-tradium";
+	private static final String HEADER_NAME = "x-authorization-tradium";
 
-	private FirebaseService firebaseService;
+	private final FirebaseService firebaseService;
 
 	public FirebaseFilter(FirebaseService firebaseService) {
 		this.firebaseService = firebaseService;
