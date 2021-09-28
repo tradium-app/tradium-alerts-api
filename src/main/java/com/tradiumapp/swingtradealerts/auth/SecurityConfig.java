@@ -6,6 +6,7 @@ import com.tradiumapp.swingtradealerts.auth.service.FirebaseService;
 import com.tradiumapp.swingtradealerts.auth.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -17,6 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -40,6 +43,16 @@ public class SecurityConfig {
         }
     }
 
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setCookieName("JSESSIONID");
+        serializer.setCookiePath("/");
+        serializer.setSameSite("None");
+        serializer.setUseSecureCookie(true);
+        return serializer;
+    }
+
     @Configuration
     @EnableWebSecurity
     protected static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
@@ -48,6 +61,7 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
                     .csrf().disable()
+                    .sessionManagement().and()
                     .authorizeRequests().anyRequest().permitAll();
         }
 
