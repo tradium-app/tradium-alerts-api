@@ -20,7 +20,7 @@ public class WatchListQuery implements GraphQLQueryResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST_ADMIN.id)")
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST.id)")
     public List<Stock> getWatchList() {
         String userId = PrincipalManager.getCurrentUserId();
 

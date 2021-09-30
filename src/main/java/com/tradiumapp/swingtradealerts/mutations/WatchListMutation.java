@@ -24,7 +24,7 @@ public class WatchListMutation implements GraphQLMutationResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST_ADMIN.id)")
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST.id)")
     public Response addStock(final String symbol) {
         final String symbolCap = symbol.toUpperCase(Locale.ROOT);
         logger.info("Adding stock {} to a watchlist.", symbolCap);

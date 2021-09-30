@@ -33,9 +33,9 @@ public final class BuiltInRoleDefinitions {
     );
 
     private static final Set<PermissionDefinition> AUTHENTICATED_USER_PERMISSIONS = ImmutableSet.of(
-            PermissionDefinition.ALERT_CREATE,
+            PermissionDefinition.ALERT,
             PermissionDefinition.STOCK_PROFILE_VIEW,
-            PermissionDefinition.WATCHLIST_ADMIN
+            PermissionDefinition.WATCHLIST
     );
 
     private static final Map<String, Set<PermissionDefinition>> ROLE_TO_PERMISSIONS = ImmutableMap.<String, Set<PermissionDefinition>>builder()

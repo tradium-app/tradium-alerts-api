@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,6 +24,7 @@ public class AlertMutation implements GraphQLMutationResolver {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response addAlert(final Alert alert) {
         alert.userId = PrincipalManager.getCurrentUserId();
         alert.status = AlertStatus.Off;
@@ -32,6 +34,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         return new Response(true, "Alert save successful.");
     }
 
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response updateAlert(final Alert alert) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alert.id));
