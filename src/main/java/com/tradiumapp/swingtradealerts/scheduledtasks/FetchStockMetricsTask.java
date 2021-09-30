@@ -40,9 +40,9 @@ public class FetchStockMetricsTask {
         List<User> users = (List<User>) userRepository.findAll();
         Set<String> symbols = new HashSet<>();
 
-        users.forEach((user) -> {
-            symbols.addAll(user.watchList);
-        });
+        for (User user : users) {
+            if (user.watchList != null) symbols.addAll(user.watchList);
+        }
 
         List<Stock> stocks = stockRepository.findBySymbolIn(new ArrayList<>(symbols));
         List<Stock> updatedStocks = new ArrayList<>();
@@ -50,9 +50,10 @@ public class FetchStockMetricsTask {
         for (Stock stock : stocks) {
             Response<FinnhubMetricResponse> fetchResponse = finnhubService.getStockMetrics(stock.symbol, apiKey).execute();
 
-            if(stock.metric == null) stock.metric = new Stock.StockMetric();
-            stock.metric.beta = fetchResponse.body().metric.beta;
-            stock.metric.marketCapitalization = fetchResponse.body().metric.marketCapitalization;
+            stock.beta = fetchResponse.body().metric.beta;
+            stock.marketCap = fetchResponse.body().metric.marketCapitalization;
+            stock.week52High = fetchResponse.body().metric._52WeekHigh;
+            stock.week52Low = fetchResponse.body().metric._52WeekLow;
 
             updatedStocks.add(stock);
         }

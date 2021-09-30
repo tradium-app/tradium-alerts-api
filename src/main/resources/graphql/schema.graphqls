@@ -28,6 +28,7 @@ type Stock {
     week52High: Float
     week52Low: Float
     ytdChangePercent: Float
+    beta: Float
     modifiedDate: String
 }
 

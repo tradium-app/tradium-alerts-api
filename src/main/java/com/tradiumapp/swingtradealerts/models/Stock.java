@@ -20,26 +20,21 @@ public class Stock {
     public String company;
     public float price;
     public float changePercent;
-    public float marketCap;
-    public float peRatio;
-    public float week52High;
-    public float week52Low;
-    public float ytdChangePercent;
+
     public boolean shouldRefresh;
     public boolean isEnabled;
     public float closeTime;
     public float latestPrice;
-    public StockMetric metric;
+
+    public float marketCap;
+    public float beta;
+    public float peRatio;
+    public float week52High;
+    public float week52Low;
+    public float ytdChangePercent;
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
-
-    public static class StockMetric {
-        public float _52WeekHigh;
-        public float _52WeekLow;
-        public float beta;
-        public float marketCapitalization;
-    }
 }
 
 
