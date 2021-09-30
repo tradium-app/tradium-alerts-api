@@ -21,6 +21,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
@@ -60,10 +62,21 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
+            http
+                    .addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
                     .csrf().disable()
                     .sessionManagement().and()
                     .authorizeRequests().anyRequest().permitAll();
+
+            http
+                    .logout()
+                    .permitAll()
+                    .logoutUrl("/perform_logout")
+                    .logoutSuccessHandler((request, response, authentication) -> {
+                                response.setStatus(HttpServletResponse.SC_OK);
+                            }
+                    )
+            .deleteCookies("S-SESSIONID");
         }
 
         @Autowired(required = false)
