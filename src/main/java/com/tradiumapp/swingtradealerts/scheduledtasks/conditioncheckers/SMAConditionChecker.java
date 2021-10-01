@@ -1,17 +1,19 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers;
 
 import com.tradiumapp.swingtradealerts.models.Condition;
-import org.ta4j.core.indicators.EMAIndicator;
+import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 
 public class SMAConditionChecker implements ConditionChecker {
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
-        EMAIndicator indicator = new EMAIndicator(priceIndicator, condition.valueConfig.length);
-        float lastRsiValue = indicator.getValue(indicator.getBarSeries().getBarCount() - 1).floatValue();
+        float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
-        if (condition.valueConfig.upDirection && lastRsiValue > condition.valueConfig.value) {
+        SMAIndicator indicator = new SMAIndicator(priceIndicator, condition.valueConfig.length);
+        float smaValue = indicator.getValue(indicator.getBarSeries().getBarCount() - 1).floatValue();
+
+        if (condition.valueConfig.upDirection && lastValue > (1 + condition.valueConfig.value) * smaValue) {
             return true;
-        } else if (!condition.valueConfig.upDirection && lastRsiValue < condition.valueConfig.value) {
+        } else if (!condition.valueConfig.upDirection && lastValue < (1 - condition.valueConfig.value) * smaValue) {
             return true;
         } else {
             return false;
