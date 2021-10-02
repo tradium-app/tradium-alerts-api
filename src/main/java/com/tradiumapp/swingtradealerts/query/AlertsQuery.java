@@ -20,11 +20,11 @@ public class AlertsQuery implements GraphQLQueryResolver {
         String userId = PrincipalManager.getCurrentUserId();
 
         Query query1 = new Query();
-        query1.addCriteria(Criteria.where("symbol").is(symbol)
-                .andOperator(Criteria.where("userId").is(userId)));
+        query1.addCriteria(Criteria.where("userId").is(userId));
+
+        if (symbol != null) query1.addCriteria(Criteria.where("symbol").is(symbol));
 
         List<Alert> alerts = mongoTemplate.find(query1, Alert.class);
-
         return alerts;
     }
 }

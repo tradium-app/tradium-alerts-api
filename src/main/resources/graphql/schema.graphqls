@@ -52,6 +52,7 @@ type Alert {
     id: String!
     symbol: String!
     title: String
+    status: String
     conditions: [Condition]
     createdDate: String
     modifiedDate: String
