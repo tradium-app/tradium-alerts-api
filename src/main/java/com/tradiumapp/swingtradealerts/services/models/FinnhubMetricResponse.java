@@ -15,5 +15,8 @@ public class FinnhubMetricResponse {
 
         public float beta;
         public float marketCapitalization;
+
+        public float revenueGrowthQuarterlyYoy;
+        public float revenueGrowthTTMYoy;
     }
 }

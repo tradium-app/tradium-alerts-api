@@ -54,6 +54,8 @@ public class FetchStockMetricsTask {
             stock.marketCap = fetchResponse.body().metric.marketCapitalization;
             stock.week52High = fetchResponse.body().metric._52WeekHigh;
             stock.week52Low = fetchResponse.body().metric._52WeekLow;
+            stock.revenueGrowthQuarterlyYoy = fetchResponse.body().metric.revenueGrowthQuarterlyYoy;
+            stock.revenueGrowthTTMYoy = fetchResponse.body().metric.revenueGrowthTTMYoy;
 
             updatedStocks.add(stock);
         }

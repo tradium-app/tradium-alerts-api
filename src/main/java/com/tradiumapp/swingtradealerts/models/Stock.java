@@ -35,6 +35,9 @@ public class Stock {
     public float week52Low;
     public float ytdChangePercent;
 
+    public float revenueGrowthQuarterlyYoy;
+    public float revenueGrowthTTMYoy;
+
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
 }

@@ -29,6 +29,8 @@ type Stock {
     week52Low: Float
     ytdChangePercent: Float
     beta: Float
+    revenueGrowthQuarterlyYoy: Float
+    revenueGrowthTTMYoy: Float
     alertStatus: Boolean
     modifiedDate: String
 }
