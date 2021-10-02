@@ -105,7 +105,7 @@ public class SendAlertTask {
             updateAlert(alert, alert.status);
         }
 
-        logger.info("The time is now {}", dateFormat.format(new Date()));
+        logger.info("SendAlertTask ran at {}", dateFormat.format(new Date()));
     }
 
     private boolean isConditionMet(Condition condition, BarSeries series) {
@@ -133,6 +133,7 @@ public class SendAlertTask {
 
         Update update = new Update();
         update.set("status", status);
+        update.set("modifiedDate", new Date());
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
         return result.getModifiedCount() == 1;
