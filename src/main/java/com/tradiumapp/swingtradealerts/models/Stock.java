@@ -23,6 +23,8 @@ public class Stock {
 
     public boolean shouldRefresh;
     public boolean isEnabled;
+    public boolean alertStatus;
+
     public float closeTime;
     public float latestPrice;
 

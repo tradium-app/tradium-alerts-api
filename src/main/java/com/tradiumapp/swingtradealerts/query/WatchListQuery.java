@@ -2,6 +2,8 @@
 package com.tradiumapp.swingtradealerts.query;
 
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
+import com.tradiumapp.swingtradealerts.models.Alert;
+import com.tradiumapp.swingtradealerts.models.AlertStatus;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.User;
 import graphql.kickstart.tools.GraphQLQueryResolver;
@@ -32,6 +34,16 @@ public class WatchListQuery implements GraphQLQueryResolver {
             Query query2 = new Query();
             query2.addCriteria(Criteria.where("symbol").in(user.watchList));
             List<Stock> stocks = mongoTemplate.find(query2, Stock.class);
+
+            Query query3 = new Query();
+            query3.addCriteria(Criteria.where("userId").is(userId));
+            query3.addCriteria(Criteria.where("symbol").in(user.watchList));
+            List<Alert> alerts = mongoTemplate.find(query3, Alert.class);
+
+            for (Stock stock : stocks) {
+                stock.alertStatus = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
+                        && a.status == AlertStatus.On);
+            }
 
             return stocks;
         } else {

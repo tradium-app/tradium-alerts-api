@@ -87,7 +87,6 @@ public class SendAlertTask {
                     series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
                 } catch (Exception ignore) {
                 }
-
             }
 
             boolean shouldAlertFire = true;
