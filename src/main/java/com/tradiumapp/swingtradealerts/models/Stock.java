@@ -38,6 +38,8 @@ public class Stock {
     public float revenueGrowthQuarterlyYoy;
     public float revenueGrowthTTMYoy;
 
+    public float redditRank;
+
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
 }
