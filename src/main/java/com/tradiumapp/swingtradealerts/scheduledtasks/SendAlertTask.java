@@ -3,11 +3,9 @@ package com.tradiumapp.swingtradealerts.scheduledtasks;
 import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.models.*;
 import com.tradiumapp.swingtradealerts.repositories.AlertRepository;
+import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
-import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.ConditionChecker;
-import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.EMAConditionChecker;
-import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.RSIConditionChecker;
-import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.SMAConditionChecker;
+import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +43,9 @@ public class SendAlertTask {
     private UserRepository userRepository;
 
     @Autowired
+    private StockRepository stockRepository;
+
+    @Autowired
     MongoTemplate mongoTemplate;
 
     @Autowired
@@ -55,6 +56,8 @@ public class SendAlertTask {
         List<Alert> alerts = alertRepository.findByStatusNot(AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = new HashMap<>();
+        HashMap<String, Stock> stocksMap = new HashMap<>();
+
         long startEpoch = Instant.now().minusSeconds(2_592_000).toEpochMilli();
 
         for (Alert alert : alerts) {
@@ -69,6 +72,8 @@ public class SendAlertTask {
                             .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
                             .collect(Collectors.toList());
                     stockPricesMap.put(stock.symbol, stockPrices);
+
+                    stocksMap.put(stock.symbol, stockRepository.findBySymbol(stock.symbol));
                 }
             }
         }
@@ -91,7 +96,7 @@ public class SendAlertTask {
 
             boolean shouldAlertFire = true;
             for (Condition condition : alert.conditions) {
-                shouldAlertFire = shouldAlertFire && isConditionMet(condition, series);
+                shouldAlertFire = shouldAlertFire && isConditionMet(stocksMap.get(alert.symbol), condition, series);
             }
 
             if (shouldAlertFire) {
@@ -108,7 +113,7 @@ public class SendAlertTask {
         logger.info("SendAlertTask ran at {}", dateFormat.format(new Date()));
     }
 
-    private boolean isConditionMet(Condition condition, BarSeries series) {
+    private boolean isConditionMet(Stock stock, Condition condition, BarSeries series) {
         try {
             ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
             ConditionChecker conditionChecker;
@@ -116,8 +121,10 @@ public class SendAlertTask {
                 conditionChecker = new RSIConditionChecker();
             } else if (condition.indicator.equals(IndicatorType.sma)) {
                 conditionChecker = new SMAConditionChecker();
-            } else {
+            } else if (condition.indicator.equals(IndicatorType.ema)) {
                 conditionChecker = new EMAConditionChecker();
+            } else {
+                conditionChecker = new RedditTrendingConditionChecker(stock);
             }
 
             return conditionChecker.checkCondition(condition, closePrice);

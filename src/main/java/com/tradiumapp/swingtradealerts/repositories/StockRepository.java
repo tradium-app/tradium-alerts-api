@@ -7,5 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 
 public interface StockRepository extends PagingAndSortingRepository<Stock, ObjectId> {
+    Stock findBySymbol(String symbol);
     List<Stock> findBySymbolIn(List<String> symbols);
 }
