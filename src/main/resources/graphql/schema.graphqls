@@ -93,13 +93,13 @@ type Response {
     success: Boolean
     message: String
     user: User
+    alert: Alert
 }
 
 type Query {
     getWatchList:[Stock]
     searchStocks(searchTerm: String): [Stock]
     getAlerts(symbol: String): [Alert]
-#    getNotifications: [Notification]
 }
 
 type Mutation {

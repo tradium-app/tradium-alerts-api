@@ -31,7 +31,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         mongoTemplate.save(alert);
 
         logger.info("Alert for {} added successfully.", alert.symbol);
-        return new Response(true, "Alert save successful.");
+        return new Response(true, "Alert save successful.", alert);
     }
 
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
