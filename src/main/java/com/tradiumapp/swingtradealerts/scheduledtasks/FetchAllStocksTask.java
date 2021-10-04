@@ -30,7 +30,7 @@ public class FetchAllStocksTask {
     @Value("${IEX_API_TOKEN}")
     private String iexToken;
 
-    @Scheduled(cron = "0 0 0 */1 * *")
+    @Scheduled(cron = "0 0 0 * * 1")
     public void fetchAllStocks() throws IOException {
         Response<List<Stock>> fetchResponse = iexService.listStocks(iexToken).execute();
         if (fetchResponse.isSuccessful()) {

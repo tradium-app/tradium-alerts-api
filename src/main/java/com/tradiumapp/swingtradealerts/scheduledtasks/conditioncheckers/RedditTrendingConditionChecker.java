@@ -6,7 +6,7 @@ import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 
 public class RedditTrendingConditionChecker implements ConditionChecker {
-    private Stock stock;
+    private final Stock stock;
 
     public RedditTrendingConditionChecker(Stock stock) {
         this.stock = stock;
