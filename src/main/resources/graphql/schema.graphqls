@@ -34,6 +34,8 @@ type Stock {
     rsi: Float
     redditRank: Float
     alertStatus: Boolean
+    isOnWatchList: Boolean
+    alerts: [Alert]
     modifiedDate: String
 }
 
@@ -102,6 +104,7 @@ type Query {
     getWatchList:[Stock]
     searchStocks(searchTerm: String): [Stock]
     getAlerts(symbol: String): [Alert]
+    getStockProfile(symbol: String): Stock
 }
 
 type Mutation {

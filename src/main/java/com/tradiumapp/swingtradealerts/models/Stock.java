@@ -41,6 +41,9 @@ public class Stock {
     public float rsi;
     public float redditRank;
 
+    public boolean isOnWatchList;
+    public List<Alert> alerts;
+
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
 }
