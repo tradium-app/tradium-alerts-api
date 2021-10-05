@@ -57,6 +57,7 @@ type ValueConfig {
 type Alert {
     id: String!
     symbol: String!
+    type: String
     title: String
     status: String
     conditions: [Condition]

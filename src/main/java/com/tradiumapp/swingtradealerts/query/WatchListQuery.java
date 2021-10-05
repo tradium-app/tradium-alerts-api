@@ -3,7 +3,6 @@ package com.tradiumapp.swingtradealerts.query;
 
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Alert;
-import com.tradiumapp.swingtradealerts.models.AlertStatus;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.User;
 import graphql.kickstart.tools.GraphQLQueryResolver;
@@ -42,7 +41,7 @@ public class WatchListQuery implements GraphQLQueryResolver {
 
             for (Stock stock : stocks) {
                 stock.alertStatus = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
-                        && a.status == AlertStatus.On);
+                        && a.status == Alert.AlertStatus.On);
             }
 
             return stocks;

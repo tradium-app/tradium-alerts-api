@@ -53,7 +53,7 @@ public class SendAlertTask {
 
     @Scheduled(cron = "0 0 19 * * *")
     public void sendAlerts() throws IOException {
-        List<Alert> alerts = alertRepository.findByStatusNot(AlertStatus.Disabled);
+        List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = new HashMap<>();
         HashMap<String, Stock> stocksMap = new HashMap<>();
@@ -100,12 +100,12 @@ public class SendAlertTask {
             }
 
             if (shouldAlertFire) {
-                if (alert.status == AlertStatus.Off) {
+                if (alert.status == Alert.AlertStatus.Off) {
                     sendEmail(users.get(0), alert);
-                    alert.status = AlertStatus.On;
+                    alert.status = Alert.AlertStatus.On;
                 }
             } else {
-                alert.status = AlertStatus.Off;
+                alert.status = Alert.AlertStatus.Off;
             }
             updateAlert(alert, alert.status);
         }
@@ -134,7 +134,7 @@ public class SendAlertTask {
         }
     }
 
-    private boolean updateAlert(Alert alert, AlertStatus status) {
+    private boolean updateAlert(Alert alert, Alert.AlertStatus status) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alert.id));
 

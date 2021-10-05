@@ -4,7 +4,6 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Alert;
-import com.tradiumapp.swingtradealerts.models.AlertStatus;
 import com.tradiumapp.swingtradealerts.models.Response;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ public class AlertMutation implements GraphQLMutationResolver {
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response addAlert(final Alert alert) {
         alert.userId = PrincipalManager.getCurrentUserId();
-        alert.status = AlertStatus.Off;
+        alert.status = Alert.AlertStatus.Off;
         mongoTemplate.save(alert);
 
         logger.info("Alert for {} added successfully.", alert.symbol);

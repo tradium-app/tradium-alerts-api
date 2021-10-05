@@ -12,6 +12,7 @@ public class Alert {
 
     public String userId;
     public String symbol;
+    public AlertType type;
     public String title;
     public AlertStatus status;
 
@@ -19,4 +20,12 @@ public class Alert {
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
+
+    public enum AlertType {
+        Buy, Sell
+    }
+
+    public enum AlertStatus {
+        On, Off, Disabled
+    }
 }
