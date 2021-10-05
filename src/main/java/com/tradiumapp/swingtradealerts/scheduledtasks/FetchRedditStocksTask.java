@@ -39,6 +39,7 @@ public class FetchRedditStocksTask {
     public void fetchAllRedditStocks() throws IOException {
         Response<ApeWisdomResponse> fetchResponse = apeWisdomService.getTopTrendingStocks().execute();
         if (fetchResponse.isSuccessful()) {
+            resetRedditRankOfAllStocks();
             List<ApeWisdomResponse.Trending> trendingStocks = fetchResponse.body().results;
             for(ApeWisdomResponse.Trending trending: trendingStocks){
                 updateStockRank(trending.ticker, trending.rank);
@@ -47,6 +48,15 @@ public class FetchRedditStocksTask {
         } else {
             logger.error("Error while fetching reddit stocks: {}", fetchResponse.errorBody().string());
         }
+    }
+
+    private boolean resetRedditRankOfAllStocks() {
+        Query query = new Query();
+        Update update = new Update();
+        update.set("redditRank", 0);
+
+        UpdateResult result = mongoTemplate.updateMulti(query, update, Stock.class);
+        return result.getModifiedCount() > 100;
     }
 
     private boolean updateStockRank(String symbol, float redditRank) {
