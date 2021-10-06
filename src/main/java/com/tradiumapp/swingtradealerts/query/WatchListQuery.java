@@ -40,8 +40,13 @@ public class WatchListQuery implements GraphQLQueryResolver {
             List<Alert> alerts = mongoTemplate.find(query3, Alert.class);
 
             for (Stock stock : stocks) {
-                stock.alertStatus = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
-                        && a.status == Alert.AlertStatus.On);
+                stock.isBuyAlert = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
+                        && a.status == Alert.AlertStatus.On
+                        && a.signal == Alert.AlertSignal.Buy);
+
+                stock.isSellAlert = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
+                        && a.status == Alert.AlertStatus.On
+                        && a.signal == Alert.AlertSignal.Sell);
             }
 
             return stocks;

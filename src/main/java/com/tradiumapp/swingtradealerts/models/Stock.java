@@ -25,6 +25,9 @@ public class Stock {
     public boolean isEnabled;
     public boolean alertStatus;
 
+    public boolean isBuyAlert;
+    public boolean isSellAlert;
+
     public float closeTime;
     public float latestPrice;
 
