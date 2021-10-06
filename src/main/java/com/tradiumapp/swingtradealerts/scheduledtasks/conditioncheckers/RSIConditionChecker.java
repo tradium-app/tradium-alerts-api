@@ -10,11 +10,11 @@ public class RSIConditionChecker implements ConditionChecker {
         float lastValue = indicator.getValue(indicator.getBarSeries().getBarCount() - 1).floatValue();
 
         if (condition.valueConfig.upDirection && lastValue > condition.valueConfig.value) {
-            return true;
+            return condition.operator == null || condition.operator == Condition.Operator.And;
         } else if (!condition.valueConfig.upDirection && lastValue < condition.valueConfig.value) {
-            return true;
+            return condition.operator == null || condition.operator == Condition.Operator.And;
         } else {
-            return false;
+            return condition.operator == Condition.Operator.Not;
         }
     }
 }

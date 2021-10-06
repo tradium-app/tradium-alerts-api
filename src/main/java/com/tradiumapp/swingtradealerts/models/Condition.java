@@ -2,6 +2,7 @@ package com.tradiumapp.swingtradealerts.models;
 
 public class Condition {
     public int order;
+    public Operator operator;
     public IndicatorType indicator;
     public String timeframe;
     public String value;
@@ -13,5 +14,9 @@ public class Condition {
         public String source;
         public float value;
         public boolean upDirection;
+    }
+
+    public enum Operator {
+        And, Not
     }
 }
