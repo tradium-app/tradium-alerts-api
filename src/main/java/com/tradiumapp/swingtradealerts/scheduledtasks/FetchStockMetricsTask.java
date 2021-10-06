@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import retrofit2.Response;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -36,31 +35,35 @@ public class FetchStockMetricsTask {
     private String apiKey;
 
     @Scheduled(cron = "0 40 18 * * 1-5", zone = "EST")
-    public void fetchStockMetrics() throws IOException {
-        List<User> users = (List<User>) userRepository.findAll();
-        Set<String> symbols = new HashSet<>();
+    public void fetchStockMetrics() {
+        try {
+            List<User> users = (List<User>) userRepository.findAll();
+            Set<String> symbols = new HashSet<>();
 
-        for (User user : users) {
-            if (user.watchList != null) symbols.addAll(user.watchList);
+            for (User user : users) {
+                if (user.watchList != null) symbols.addAll(user.watchList);
+            }
+
+            List<Stock> stocks = stockRepository.findBySymbolIn(new ArrayList<>(symbols));
+            List<Stock> updatedStocks = new ArrayList<>();
+
+            for (Stock stock : stocks) {
+                Response<FinnhubMetricResponse> fetchResponse = finnhubService.getStockMetrics(stock.symbol, apiKey).execute();
+
+                stock.beta = fetchResponse.body().metric.beta;
+                stock.marketCap = fetchResponse.body().metric.marketCapitalization;
+                stock.week52High = fetchResponse.body().metric._52WeekHigh;
+                stock.week52Low = fetchResponse.body().metric._52WeekLow;
+                stock.revenueGrowthQuarterlyYoy = fetchResponse.body().metric.revenueGrowthQuarterlyYoy;
+                stock.revenueGrowthTTMYoy = fetchResponse.body().metric.revenueGrowthTTMYoy;
+
+                updatedStocks.add(stock);
+            }
+
+            stockRepository.saveAll(updatedStocks);
+            logger.info("FetchStockMetricsTask ran at {}", timeFormat.format(new Date()));
+        } catch (Exception ex) {
+            logger.error("Error while running FetchStockMetricsTask: ", ex);
         }
-
-        List<Stock> stocks = stockRepository.findBySymbolIn(new ArrayList<>(symbols));
-        List<Stock> updatedStocks = new ArrayList<>();
-
-        for (Stock stock : stocks) {
-            Response<FinnhubMetricResponse> fetchResponse = finnhubService.getStockMetrics(stock.symbol, apiKey).execute();
-
-            stock.beta = fetchResponse.body().metric.beta;
-            stock.marketCap = fetchResponse.body().metric.marketCapitalization;
-            stock.week52High = fetchResponse.body().metric._52WeekHigh;
-            stock.week52Low = fetchResponse.body().metric._52WeekLow;
-            stock.revenueGrowthQuarterlyYoy = fetchResponse.body().metric.revenueGrowthQuarterlyYoy;
-            stock.revenueGrowthTTMYoy = fetchResponse.body().metric.revenueGrowthTTMYoy;
-
-            updatedStocks.add(stock);
-        }
-
-        stockRepository.saveAll(updatedStocks);
-        logger.info("FetchStockMetricsTask ran at {}", timeFormat.format(new Date()));
     }
 }
