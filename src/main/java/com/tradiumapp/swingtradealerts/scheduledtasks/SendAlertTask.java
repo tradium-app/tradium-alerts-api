@@ -51,7 +51,7 @@ public class SendAlertTask {
     @Autowired
     EmailSender emailSender;
 
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = "0 0 19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();

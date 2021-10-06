@@ -35,7 +35,7 @@ public class FetchRedditStocksTask {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @Scheduled(cron = "0 20 18 * * 1-5")
+    @Scheduled(cron = "0 20 18 * * 1-5", zone = "EST")
     public void fetchAllRedditStocks() throws IOException {
         Response<ApeWisdomResponse> fetchResponse = apeWisdomService.getTopTrendingStocks().execute();
         if (fetchResponse.isSuccessful()) {

@@ -40,7 +40,7 @@ public class FetchQuotesTask {
     @Autowired
     private StockHistoryRepository stockHistoryRepository;
 
-    @Scheduled(cron = "0 0 18 * * 1-5")
+    @Scheduled(cron = "0 0 18 * * 1-5", zone = "EST")
     public void fetchQuotes() throws IOException {
         String day = dayFormat.format(new Date());
         Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();

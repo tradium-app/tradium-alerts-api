@@ -35,7 +35,7 @@ public class FetchStockMetricsTask {
     @Value("${FINNHUB_API_KEY}")
     private String apiKey;
 
-    @Scheduled(cron = "0 40 18 * * 1-5")
+    @Scheduled(cron = "0 40 18 * * 1-5", zone = "EST")
     public void fetchStockMetrics() throws IOException {
         List<User> users = (List<User>) userRepository.findAll();
         Set<String> symbols = new HashSet<>();
