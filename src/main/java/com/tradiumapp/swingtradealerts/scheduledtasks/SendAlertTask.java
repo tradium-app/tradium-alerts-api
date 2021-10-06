@@ -51,7 +51,7 @@ public class SendAlertTask {
     @Autowired
     EmailSender emailSender;
 
-    @Scheduled(cron = "0 0 11 * * *", zone = "EST")
+    @Scheduled(cron = "0 0 19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
         List<User> users = (List<User>) userRepository.findAll();
@@ -128,7 +128,12 @@ public class SendAlertTask {
                 conditionChecker = new RedditTrendingConditionChecker(stock);
             }
 
-            return conditionChecker.checkCondition(condition, closePrice);
+            boolean result = conditionChecker.checkCondition(condition, closePrice);
+
+            if (condition.operator == Condition.Operator.Not)
+                return !result;
+            else
+                return result;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             return false;
@@ -156,6 +161,7 @@ public class SendAlertTask {
 
         try {
             emailSender.sendEmail(user, subject, message);
-        } catch(Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 }

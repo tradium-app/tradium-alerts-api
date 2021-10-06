@@ -12,11 +12,11 @@ public class EMAConditionChecker implements ConditionChecker {
         float emaValue = indicator.getValue(indicator.getBarSeries().getBarCount() - 1).floatValue();
 
         if (condition.valueConfig.upDirection && lastValue > (1 + condition.valueConfig.value) * emaValue) {
-            return condition.operator == null || condition.operator == Condition.Operator.And;
+            return true;
         } else if (!condition.valueConfig.upDirection && lastValue < (1 - condition.valueConfig.value) * emaValue) {
-            return condition.operator == null || condition.operator == Condition.Operator.And;
+            return true;
         } else {
-            return condition.operator == Condition.Operator.Not;
+            return false;
         }
     }
 }
