@@ -40,6 +40,7 @@ public class AlertMutation implements GraphQLMutationResolver {
 
         Update update = new Update();
         update.set("title", alert.title);
+        update.set("signal", alert.signal);
         update.set("conditions", alert.conditions);
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
