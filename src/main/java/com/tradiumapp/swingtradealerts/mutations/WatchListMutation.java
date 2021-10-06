@@ -4,7 +4,9 @@ import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.User;
+import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import graphql.kickstart.tools.GraphQLMutationResolver;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class WatchListMutation implements GraphQLMutationResolver {
 
     @Autowired
     MongoTemplate mongoTemplate;
+
+    @Autowired
+    UserRepository userRepository;
 
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST.id)")
     public Response addStock(final String symbol) {
@@ -48,5 +53,23 @@ public class WatchListMutation implements GraphQLMutationResolver {
         }
 
         return new Response(false, "Stock not added to the watchlist.");
+    }
+
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST.id)")
+    public Response removeStock(final String symbol) {
+        final String symbolCap = symbol.toUpperCase(Locale.ROOT);
+        logger.info("Removing stock {} from a watchlist.", symbolCap);
+
+        String userId = PrincipalManager.getCurrentUserId();
+
+        User user = userRepository.findById(new ObjectId(userId)).get();
+        user.watchList.remove(symbolCap);
+        user = userRepository.save(user);
+
+        if(!user.watchList.contains(symbolCap)){
+            return new Response(true, "Stock removed from the watchlist.");
+        } else {
+            return new Response(false, "Stock not removed from the watchlist.");
+        }
     }
 }

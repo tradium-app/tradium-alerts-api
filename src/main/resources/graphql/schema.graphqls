@@ -116,6 +116,7 @@ type Query {
 type Mutation {
     loginUser(accessToken: String): Response
     addStock(symbol: String):Response
+    removeStock(symbol: String):Response
     addAlert(alertInput: AlertInput): Response
     updateAlert(alertInput: AlertInput): Response
     deleteAlert(alertId: String): Response
