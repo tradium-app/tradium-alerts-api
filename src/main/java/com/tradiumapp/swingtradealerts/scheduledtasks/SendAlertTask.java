@@ -148,7 +148,7 @@ public class SendAlertTask {
     }
 
     private void sendEmail(User user, Alert alert) throws IOException {
-        String subject = alert.symbol + " : " + alert.title;
+        String subject = alert.signal + " " + alert.symbol + " : " + alert.title;
         String message = "";
         for (Condition condition : alert.conditions) {
             message += StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase() + " meets criteria '" + condition.valueText + "'. <br/> ";

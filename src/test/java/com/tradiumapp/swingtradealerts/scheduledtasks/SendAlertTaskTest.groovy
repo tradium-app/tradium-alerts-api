@@ -12,7 +12,7 @@ public class SendAlertTaskTest extends AbstractTestNGSpringContextTests {
     private SendAlertTask task
 
     @Test(groups = "integration")
-    void testFetchQuotes() {
+    void testSendAlerts() {
         task.sendAlerts();
     }
 }
