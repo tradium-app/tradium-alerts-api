@@ -154,6 +154,8 @@ public class SendAlertTask {
             message += StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase() + " meets criteria '" + condition.valueText + "'. <br/> ";
         }
 
-        emailSender.sendEmail(user, subject, message);
+        try {
+            emailSender.sendEmail(user, subject, message);
+        } catch(Exception ignored) {}
     }
 }
