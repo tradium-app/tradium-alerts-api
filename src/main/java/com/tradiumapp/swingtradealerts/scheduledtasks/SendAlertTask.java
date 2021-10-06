@@ -101,7 +101,8 @@ public class SendAlertTask {
 
             if (shouldAlertFire) {
                 if (alert.status == Alert.AlertStatus.Off) {
-                    sendEmail(users.get(0), alert);
+                    User user = users.stream().filter(u -> u.id.toString().equals(alert.userId)).findFirst().get();
+                    sendEmail(user, alert);
                     alert.status = Alert.AlertStatus.On;
                 }
             } else {
