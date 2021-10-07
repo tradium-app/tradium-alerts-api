@@ -5,7 +5,11 @@ import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Alert;
 import com.tradiumapp.swingtradealerts.models.Response;
+import com.tradiumapp.swingtradealerts.models.User;
+import com.tradiumapp.swingtradealerts.repositories.AlertRepository;
+import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import graphql.kickstart.tools.GraphQLMutationResolver;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +20,21 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class AlertMutation implements GraphQLMutationResolver {
     Logger logger = LoggerFactory.getLogger(AlertMutation.class);
 
     @Autowired
     MongoTemplate mongoTemplate;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    AlertRepository alertRepository;
 
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response addAlert(final Alert alert) {
@@ -44,7 +57,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         update.set("conditions", alert.conditions);
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
-        Boolean success = result.getModifiedCount() == 1;
+        boolean success = result.getModifiedCount() == 1;
 
         if (success) {
             logger.info("Alert for {} updated successfully.", alert.symbol);
@@ -54,6 +67,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         }
     }
 
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response deleteAlert(final String alertId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alertId));
@@ -65,5 +79,30 @@ public class AlertMutation implements GraphQLMutationResolver {
             logger.error("Alert {} delete failed.", alertId);
             return new Response(false, "Alert delete failed.");
         }
+    }
+
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
+    public Response copyAlertToAllStocks(final String alertId) {
+        Alert alert = alertRepository.findById(new ObjectId(alertId)).get();
+
+        String userId = PrincipalManager.getCurrentUserId();
+        User user = userRepository.findById(new ObjectId(userId)).get();
+
+        List<Alert> newAlerts = new ArrayList<>();
+
+        for (String symbol : user.watchList) {
+            Alert newAlert = new Alert();
+            newAlert.userId = userId;
+            newAlert.signal = alert.signal;
+            newAlert.status = Alert.AlertStatus.Off;
+            newAlert.title = alert.title + " [copied from " + symbol + "]";
+            newAlert.conditions = alert.conditions;
+
+            newAlerts.add(newAlert);
+        }
+
+        alertRepository.saveAll(newAlerts);
+
+        return new Response(true, "Alert copied to all stocks");
     }
 }

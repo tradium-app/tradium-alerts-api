@@ -120,5 +120,6 @@ type Mutation {
     addAlert(alertInput: AlertInput): Response
     updateAlert(alertInput: AlertInput): Response
     deleteAlert(alertId: String): Response
+    copyAlertToAllStocks(alertId: String): Response
     runJob(jobId: Float): Response
 }
