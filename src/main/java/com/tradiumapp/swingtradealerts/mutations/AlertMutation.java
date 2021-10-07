@@ -91,14 +91,17 @@ public class AlertMutation implements GraphQLMutationResolver {
         List<Alert> newAlerts = new ArrayList<>();
 
         for (String symbol : user.watchList) {
-            Alert newAlert = new Alert();
-            newAlert.userId = userId;
-            newAlert.signal = alert.signal;
-            newAlert.status = Alert.AlertStatus.Off;
-            newAlert.title = alert.title + " [copied from " + symbol + "]";
-            newAlert.conditions = alert.conditions;
+            if (!symbol.equals(alert.symbol)) {
+                Alert newAlert = new Alert();
+                newAlert.userId = userId;
+                newAlert.symbol = symbol;
+                newAlert.signal = alert.signal;
+                newAlert.status = Alert.AlertStatus.Off;
+                newAlert.title = alert.title + " [copied from " + alert.symbol + "]";
+                newAlert.conditions = alert.conditions;
 
-            newAlerts.add(newAlert);
+                newAlerts.add(newAlert);
+            }
         }
 
         alertRepository.saveAll(newAlerts);
