@@ -43,5 +43,7 @@ public class StockHistory {
 
         @SerializedName(value = "time", alternate = "t")
         public Long time;
+
+        public StockPrice(){}
     }
 }

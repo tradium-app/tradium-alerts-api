@@ -1,4 +1,4 @@
-package com.tradiumapp.swingtradealerts.scheduledtasks;
+package com.tradiumapp.swingtradealerts.scheduledtasks.helpers;
 
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class EmailSender {
-    private static final Logger logger = LoggerFactory.getLogger(EmailSender.class);
+public class SendGridEmailSender {
+    private static final Logger logger = LoggerFactory.getLogger(SendGridEmailSender.class);
 
     @Value("${SENDGRID_API_KEY}")
     private String sendGridApiKey;
