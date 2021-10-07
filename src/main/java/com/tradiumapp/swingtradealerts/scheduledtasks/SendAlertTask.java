@@ -52,7 +52,6 @@ public class SendAlertTask {
     @Scheduled(cron = "0 0 19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
-        alerts = alerts.stream().filter(a -> a.id.toString().equals("615e6bd85d97d354b3a3c604")).collect(Collectors.toList());
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = loadStockHistory(alerts);
 
         HashMap<String, Stock> stocksMap = new HashMap<>();
@@ -142,6 +141,10 @@ public class SendAlertTask {
             conditionChecker = new SMAConditionChecker();
         } else if (condition.indicator.equals(IndicatorType.ema)) {
             conditionChecker = new EMAConditionChecker();
+        } else if (condition.indicator.equals(IndicatorType.week52high)) {
+            conditionChecker = new Week52HighConditionChecker(stock);
+        } else if (condition.indicator.equals(IndicatorType.week52low)) {
+            conditionChecker = new Week52LowConditionChecker(stock);
         } else {
             conditionChecker = new RedditTrendingConditionChecker(stock);
         }
@@ -182,7 +185,7 @@ public class SendAlertTask {
             message += (i + 1) + ") " + alert.signal + " " + alert.symbol + ": " + alerts.get(i).title + " <br/> ";
 
             for (Condition condition : alerts.get(i).conditions) {
-                message += "    " + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
+                message += "&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
                         + (condition.operator == Condition.Operator.Not ? " ≠ " : " = ")
                         + " '" + condition.valueText + "'. <br/> ";
             }
