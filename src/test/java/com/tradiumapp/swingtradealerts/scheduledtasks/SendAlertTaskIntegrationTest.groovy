@@ -7,7 +7,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
 import org.testng.annotations.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SendAlertTaskTest extends AbstractTestNGSpringContextTests {
+public class SendAlertTaskIntegrationTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private SendAlertTask task
 
