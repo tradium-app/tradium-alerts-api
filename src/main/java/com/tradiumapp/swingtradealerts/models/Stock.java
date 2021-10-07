@@ -42,6 +42,7 @@ public class Stock {
     public float revenueGrowthTTMYoy;
 
     public float rsi;
+    public StockTrend trend;
     public float redditRank;
 
     public boolean isOnWatchList;
@@ -49,6 +50,10 @@ public class Stock {
 
     public Date createdDate = new Date();
     public Date modifiedDate = new Date();
+
+    public enum StockTrend {
+        Up, Down
+    }
 }
 
 

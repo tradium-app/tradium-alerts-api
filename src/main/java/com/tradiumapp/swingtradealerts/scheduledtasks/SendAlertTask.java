@@ -7,6 +7,7 @@ import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +52,67 @@ public class SendAlertTask {
     @Scheduled(cron = "0 0 19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
-        List<User> users = (List<User>) userRepository.findAll();
-        HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = new HashMap<>();
-        HashMap<String, Stock> stocksMap = new HashMap<>();
+        alerts = alerts.stream().filter(a -> a.id.toString().equals("615e6bd85d97d354b3a3c604")).collect(Collectors.toList());
+        HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = loadStockHistory(alerts);
 
+        HashMap<String, Stock> stocksMap = new HashMap<>();
+        for (String symbol : stockPricesMap.keySet()) {
+            stocksMap.put(symbol, stockRepository.findBySymbol(symbol));
+        }
+
+        List<Alert> alertsToBeFired = new ArrayList<>();
+
+        for (Alert alert : alerts) {
+            try {
+                BarSeries series = new BaseBarSeriesBuilder().withName(alert.symbol).build();
+                List<StockHistory.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
+                if (stockPrices == null) break;
+                stockPrices.sort(Comparator.comparing((StockHistory.StockPrice o) -> o.time));
+                stockPrices.removeIf((StockHistory.StockPrice s) -> s.time.equals(0L));
+
+                for (StockHistory.StockPrice stockPrice : stockPrices) {
+                    Instant instant = Instant.ofEpochSecond(stockPrice.time);
+                    ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+                    try {
+                        series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
+                    } catch (Exception ignore) {
+                    }
+                }
+
+                boolean shouldAlertFire = true;
+                for (Condition condition : alert.conditions) {
+                    shouldAlertFire = shouldAlertFire && isConditionMet(stocksMap.get(alert.symbol), condition, series);
+                }
+
+                if (shouldAlertFire) {
+                    if (alert.status == Alert.AlertStatus.Off) {
+                        alertsToBeFired.add(alert);
+                        alert.status = Alert.AlertStatus.On;
+                    }
+                } else {
+                    alert.status = Alert.AlertStatus.Off;
+                }
+                updateAlert(alert, alert.status);
+            } catch (Exception ex) {
+                logger.error("Error while checking alert: ", ex);
+            }
+        }
+
+        Set<String> userIdsToBeAlerted = alertsToBeFired.stream().map(a -> a.userId).collect(Collectors.toSet());
+        List<User> users = (List<User>) userRepository.findAll();
+
+        for (String userId : userIdsToBeAlerted) {
+            User user = users.stream().filter(u -> u.id.toString().equals(userId)).findFirst().get();
+            List<Alert> userAlerts = alertsToBeFired.stream().filter(a -> a.userId.equals(userId)).collect(Collectors.toList());
+            sendEmail(user, userAlerts);
+        }
+
+        logger.info("SendAlertTask ran at {}", dateFormat.format(new Date()));
+    }
+
+    @NotNull
+    private HashMap<String, List<StockHistory.StockPrice>> loadStockHistory(List<Alert> alerts) {
+        HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = new HashMap<>();
         long startEpoch = Instant.now().minusSeconds(2_592_000).toEpochMilli();
 
         for (Alert alert : alerts) {
@@ -69,81 +127,31 @@ public class SendAlertTask {
                             .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
                             .collect(Collectors.toList());
                     stockPricesMap.put(stock.symbol, stockPrices);
-
-                    stocksMap.put(stock.symbol, stockRepository.findBySymbol(stock.symbol));
                 }
             }
         }
-
-        List<Alert> alertsToBeFired = new ArrayList<>();
-
-        for (Alert alert : alerts) {
-            BarSeries series = new BaseBarSeriesBuilder().withName(alert.symbol).build();
-            List<StockHistory.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
-            if (stockPrices == null) break;
-            stockPrices.sort(Comparator.comparing((StockHistory.StockPrice o) -> o.time));
-            stockPrices.removeIf((StockHistory.StockPrice s) -> s.time.equals(0L));
-
-            for (StockHistory.StockPrice stockPrice : stockPrices) {
-                Instant instant = Instant.ofEpochSecond(stockPrice.time);
-                ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
-                try {
-                    series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
-                } catch (Exception ignore) {
-                }
-            }
-
-            boolean shouldAlertFire = true;
-            for (Condition condition : alert.conditions) {
-                shouldAlertFire = shouldAlertFire && isConditionMet(stocksMap.get(alert.symbol), condition, series);
-            }
-
-            if (shouldAlertFire) {
-                if (alert.status == Alert.AlertStatus.Off) {
-                    alertsToBeFired.add(alert);
-                    alert.status = Alert.AlertStatus.On;
-                }
-            } else {
-                alert.status = Alert.AlertStatus.Off;
-            }
-            updateAlert(alert, alert.status);
-        }
-
-        Set<String> userIdsToBeAlerted = alertsToBeFired.stream().map(a -> a.userId).collect(Collectors.toSet());
-
-        for (String userId : userIdsToBeAlerted) {
-            User user = users.stream().filter(u -> u.id.toString().equals(userId)).findFirst().get();
-            List<Alert> userAlerts = alertsToBeFired.stream().filter(a -> a.userId.equals(userId)).collect(Collectors.toList());
-            sendEmail(user, userAlerts);
-        }
-
-        logger.info("SendAlertTask ran at {}", dateFormat.format(new Date()));
+        return stockPricesMap;
     }
 
     private boolean isConditionMet(Stock stock, Condition condition, BarSeries series) {
-        try {
-            ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-            ConditionChecker conditionChecker;
-            if (condition.indicator.equals(IndicatorType.rsi)) {
-                conditionChecker = new RSIConditionChecker();
-            } else if (condition.indicator.equals(IndicatorType.sma)) {
-                conditionChecker = new SMAConditionChecker();
-            } else if (condition.indicator.equals(IndicatorType.ema)) {
-                conditionChecker = new EMAConditionChecker();
-            } else {
-                conditionChecker = new RedditTrendingConditionChecker(stock);
-            }
-
-            boolean result = conditionChecker.checkCondition(condition, closePrice);
-
-            if (condition.operator == Condition.Operator.Not)
-                return !result;
-            else
-                return result;
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-            return false;
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
+        ConditionChecker conditionChecker;
+        if (condition.indicator.equals(IndicatorType.rsi)) {
+            conditionChecker = new RSIConditionChecker();
+        } else if (condition.indicator.equals(IndicatorType.sma)) {
+            conditionChecker = new SMAConditionChecker();
+        } else if (condition.indicator.equals(IndicatorType.ema)) {
+            conditionChecker = new EMAConditionChecker();
+        } else {
+            conditionChecker = new RedditTrendingConditionChecker(stock);
         }
+
+        boolean result = conditionChecker.checkCondition(condition, closePrice);
+
+        if (condition.operator == Condition.Operator.Not)
+            return !result;
+        else
+            return result;
     }
 
     private boolean updateAlert(Alert alert, Alert.AlertStatus status) {
@@ -174,7 +182,7 @@ public class SendAlertTask {
             message += (i + 1) + ") " + alert.signal + " " + alert.symbol + ": " + alerts.get(i).title + " <br/> ";
 
             for (Condition condition : alerts.get(i).conditions) {
-                message += StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
+                message += "    " + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
                         + (condition.operator == Condition.Operator.Not ? " ≠ " : " = ")
                         + " '" + condition.valueText + "'. <br/> ";
             }
