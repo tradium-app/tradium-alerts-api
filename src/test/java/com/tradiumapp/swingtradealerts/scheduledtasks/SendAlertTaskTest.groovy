@@ -1,10 +1,7 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks
 
-import com.tradiumapp.swingtradealerts.models.Alert
-import com.tradiumapp.swingtradealerts.models.Condition
-import com.tradiumapp.swingtradealerts.models.IndicatorType
-import com.tradiumapp.swingtradealerts.models.Stock
-import com.tradiumapp.swingtradealerts.models.StockHistory
+import com.mongodb.client.result.UpdateResult
+import com.tradiumapp.swingtradealerts.models.*
 import com.tradiumapp.swingtradealerts.repositories.AlertRepository
 import com.tradiumapp.swingtradealerts.repositories.StockRepository
 import com.tradiumapp.swingtradealerts.repositories.UserRepository
@@ -21,6 +18,7 @@ import java.time.Instant
 
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
 class SendAlertTaskTest extends AbstractTestNGSpringContextTests {
@@ -50,7 +48,9 @@ class SendAlertTaskTest extends AbstractTestNGSpringContextTests {
         testAlert.title = "test alert"
         testAlert.symbol = "TEST"
 
-        def condition = new Condition(IndicatorType.week52high, "20_below_week52high", new Condition.ValueConfig("11"))
+        def config = new Condition.ValueConfig()
+        config.value = 20;
+        def condition = new Condition(IndicatorType.week52high, "20_below_week52high", config)
         testAlert.conditions = Arrays.asList(condition)
 
         List<Alert> alerts = Arrays.asList(testAlert)
@@ -71,6 +71,9 @@ class SendAlertTaskTest extends AbstractTestNGSpringContextTests {
         Stock stock = new Stock()
         stock.week52High = 100;
         when(stockRepository.findBySymbol(testAlert.symbol)).thenReturn(stock)
+
+        def result = mock(UpdateResult.class)
+        when(mongoTemplate.updateFirst(any(), any(), eq(Alert.class) as Class)).thenReturn(result)
     }
 
     @Test(groups = "unit")
