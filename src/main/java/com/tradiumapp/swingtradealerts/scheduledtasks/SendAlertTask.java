@@ -25,10 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -78,6 +75,8 @@ public class SendAlertTask {
             }
         }
 
+        List<Alert> alertsToBeFired = new ArrayList<>();
+
         for (Alert alert : alerts) {
             BarSeries series = new BaseBarSeriesBuilder().withName(alert.symbol).build();
             List<StockHistory.StockPrice> stockPrices = stockPricesMap.get(alert.symbol);
@@ -101,14 +100,21 @@ public class SendAlertTask {
 
             if (shouldAlertFire) {
                 if (alert.status == Alert.AlertStatus.Off) {
-                    User user = users.stream().filter(u -> u.id.toString().equals(alert.userId)).findFirst().get();
-                    sendEmail(user, alert);
+                    alertsToBeFired.add(alert);
                     alert.status = Alert.AlertStatus.On;
                 }
             } else {
                 alert.status = Alert.AlertStatus.Off;
             }
             updateAlert(alert, alert.status);
+        }
+
+        Set<String> userIdsToBeAlerted = alertsToBeFired.stream().map(a -> a.userId).collect(Collectors.toSet());
+
+        for (String userId : userIdsToBeAlerted) {
+            User user = users.stream().filter(u -> u.id.toString().equals(userId)).findFirst().get();
+            List<Alert> userAlerts = alertsToBeFired.stream().filter(a -> a.userId.equals(userId)).collect(Collectors.toList());
+            sendEmail(user, userAlerts);
         }
 
         logger.info("SendAlertTask ran at {}", dateFormat.format(new Date()));
@@ -152,12 +158,29 @@ public class SendAlertTask {
         return result.getModifiedCount() == 1;
     }
 
-    private void sendEmail(User user, Alert alert) throws IOException {
-        String subject = alert.signal + " " + alert.symbol + " : " + alert.title;
+    private void sendEmail(User user, List<Alert> alerts) throws IOException {
+        String buys = alerts.stream().filter(a -> a.signal == Alert.AlertSignal.Buy).limit(4)
+                .map(a -> a.symbol).collect(Collectors.joining(","));
+        String sells = alerts.stream().filter(a -> a.signal == Alert.AlertSignal.Sell).limit(4)
+                .map(a -> a.symbol).collect(Collectors.joining(","));
+
+        String subject = "Buy " + buys + "..  and Sell " + sells + "..";
+
+        alerts.sort(Comparator.comparing((Alert a) -> a.signal));
+
         String message = "";
-        for (Condition condition : alert.conditions) {
-            message += StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase() + " meets criteria '" + condition.valueText + "'. <br/> ";
+        for (int i = 0; i < alerts.size(); i++) {
+            Alert alert = alerts.get(i);
+            message += (i + 1) + ") " + alert.signal + " " + alert.symbol + ": " + alerts.get(i).title + " <br/> ";
+
+            for (Condition condition : alerts.get(i).conditions) {
+                message += StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
+                        + (condition.operator == Condition.Operator.Not ? " ≠ " : " = ")
+                        + " '" + condition.valueText + "'. <br/> ";
+            }
+            message += "<br/>";
         }
+
 
         try {
             emailSender.sendEmail(user, subject, message);

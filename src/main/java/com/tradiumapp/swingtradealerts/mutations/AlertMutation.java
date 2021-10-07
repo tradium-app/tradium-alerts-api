@@ -97,7 +97,7 @@ public class AlertMutation implements GraphQLMutationResolver {
                 newAlert.symbol = symbol;
                 newAlert.signal = alert.signal;
                 newAlert.status = Alert.AlertStatus.Off;
-                newAlert.title = alert.title + " [copied from " + alert.symbol + "]";
+                newAlert.title = alert.title + " [copy]";
                 newAlert.conditions = alert.conditions;
 
                 newAlerts.add(newAlert);
