@@ -23,22 +23,23 @@ import com.google.firebase.database.FirebaseDatabase;
 
 @Configuration
 public class FirebaseConfig {
-	Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
+    Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
 
-	@Value("${SERVICE_ACCOUNT_KEY}")
-	private String serviceAccountKey;
+    @Value("${SERVICE_ACCOUNT_KEY:}")
+    private String serviceAccountKey;
 
-	@PostConstruct
-	public void init() throws IOException {
+    @PostConstruct
+    public void init() throws IOException {
+        if (!serviceAccountKey.isEmpty()) {
+            byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountKey);
+            InputStream serviceStream = new ByteArrayInputStream(decodedBytes);
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
+                    .build();
 
-		byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountKey);
-		InputStream serviceStream =new ByteArrayInputStream(decodedBytes);
-		FirebaseOptions options = FirebaseOptions.builder()
-				.setCredentials(GoogleCredentials.fromStream(new BufferedInputStream(serviceStream)))
-				.build();
+            FirebaseApp.initializeApp(options);
 
-		FirebaseApp.initializeApp(options);
-
-		logger.info("FirebaseApp initialized...");
-	}
+            logger.info("FirebaseApp initialized...");
+        }
+    }
 }
