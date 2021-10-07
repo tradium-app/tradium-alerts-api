@@ -22,12 +22,6 @@ public class Condition {
         public String source;
         public float value;
         public boolean upDirection;
-
-        public  ValueConfig(){}
-
-        public ValueConfig(String value){
-//            this.value = value;
-        }
     }
 
     public enum Operator {
