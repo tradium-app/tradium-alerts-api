@@ -46,33 +46,37 @@ public class CalculateMetricsTask {
         List<Stock> stocks = (List<Stock>) stockRepository.findAll();
 
         for (StockHistory history : stockHistories) {
-            if(history.daily_priceHistory == null) continue;
-            List<StockHistory.StockPrice> stockPrices = history.daily_priceHistory.stream()
-                    .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
-                    .collect(Collectors.toList());
+            if (history.daily_priceHistory == null) continue;
+            try {
+                List<StockHistory.StockPrice> stockPrices = history.daily_priceHistory.stream()
+                        .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
+                        .collect(Collectors.toList());
 
-            BarSeries series = new BaseBarSeriesBuilder().build();
+                BarSeries series = new BaseBarSeriesBuilder().build();
 
-            for (StockHistory.StockPrice stockPrice : stockPrices) {
-                Instant instant = Instant.ofEpochSecond(stockPrice.time);
-                ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
-                try {
-                    series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
-                } catch (Exception ignore) {
+                for (StockHistory.StockPrice stockPrice : stockPrices) {
+                    Instant instant = Instant.ofEpochSecond(stockPrice.time);
+                    ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+                    try {
+                        series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
+                    } catch (Exception ignore) {
+                    }
                 }
+
+                PriceIndicator priceIndicator = new ClosePriceIndicator(series);
+                RSIIndicator rsiIndicator = new RSIIndicator(priceIndicator, 14);
+                float rsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
+
+                EMAIndicator emaIndicator = new EMAIndicator(priceIndicator, 20);
+                float emaValue = emaIndicator.getValue(emaIndicator.getBarSeries().getBarCount() - 1).floatValue();
+
+                Stock stock = stocks.stream().filter(s -> s.symbol.equals(history.symbol)).findFirst().get();
+                stock.rsi = rsiValue;
+                stock.trend = stock.price > emaValue ? Stock.StockTrend.Up : Stock.StockTrend.Down;
+                updatedStocks.add(stock);
+            } catch (Exception ex) {
+                logger.error("Error calculating metrics for {}: {}", history.symbol, ex);
             }
-
-            PriceIndicator priceIndicator = new ClosePriceIndicator(series);
-            RSIIndicator rsiIndicator = new RSIIndicator(priceIndicator, 14);
-            float rsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
-
-            EMAIndicator emaIndicator = new EMAIndicator(priceIndicator, 20);
-            float emaValue = emaIndicator.getValue(emaIndicator.getBarSeries().getBarCount() - 1).floatValue();
-
-            Stock stock = stocks.stream().filter(s -> s.symbol.equals(history.symbol)).findFirst().get();
-            stock.rsi = rsiValue;
-            stock.trend = stock.price > emaValue ? Stock.StockTrend.Up : Stock.StockTrend.Down;
-            updatedStocks.add(stock);
         }
 
         stockRepository.saveAll(updatedStocks);
