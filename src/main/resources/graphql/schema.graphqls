@@ -32,6 +32,7 @@ type Stock {
     revenueGrowthQuarterlyYoy: Float
     revenueGrowthTTMYoy: Float
     rsi: Float
+    trend: String
     redditRank: Float
     alertStatus: Boolean
     isBuyAlert: Boolean
