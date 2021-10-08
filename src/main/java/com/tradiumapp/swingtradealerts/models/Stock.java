@@ -38,6 +38,8 @@ public class Stock {
     public float week52Low;
     public float ytdChangePercent;
 
+    public List<Float> last30DaysClosePrices;
+
     public float revenueGrowthQuarterlyYoy;
     public float revenueGrowthTTMYoy;
 
