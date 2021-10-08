@@ -11,7 +11,7 @@ public class CalculateMetricsTaskIntegrationTest extends AbstractTestNGSpringCon
     @Autowired
     private CalculateMetricsTask task;
 
-    @Test(groups = "unit")
+    @Test(groups = "integration")
     void testCalculateMetrics() {
         task.calculateMetrics();
     }
