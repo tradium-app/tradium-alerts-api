@@ -6,4 +6,5 @@ import org.bson.types.ObjectId;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface StockHistoryRepository extends PagingAndSortingRepository<StockHistory, ObjectId> {
+    Stock findBySymbol(String symbol);
 }

@@ -7,8 +7,6 @@ import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import com.tradiumapp.swingtradealerts.scheduledtasks.helpers.AlertEmailSender;
-import com.tradiumapp.swingtradealerts.scheduledtasks.helpers.SendGridEmailSender;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
