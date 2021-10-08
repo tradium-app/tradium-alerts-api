@@ -1,6 +1,7 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
 import com.tradiumapp.swingtradealerts.models.Response;
+import com.tradiumapp.swingtradealerts.scheduledtasks.CalculateMetricsTask;
 import com.tradiumapp.swingtradealerts.scheduledtasks.FetchAllStocksTask;
 import com.tradiumapp.swingtradealerts.scheduledtasks.FetchQuotesTask;
 import com.tradiumapp.swingtradealerts.scheduledtasks.SendAlertTask;
@@ -25,10 +26,14 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     @Autowired
     private SendAlertTask sendAlertTask;
 
+    @Autowired
+    private CalculateMetricsTask calculateMetricsTask;
+
     public Response runJob(final float jobId) throws IOException {
         if(jobId == 1001) fetchAllStocksTask.fetchAllStocks();
         else if(jobId == 1002) fetchQuotesTask.fetchQuotes();
         else if(jobId == 1003) sendAlertTask.sendAlerts();
+        else if(jobId == 1004) calculateMetricsTask.calculateMetrics();
 
         logger.info("Job {} ran successfully.", jobId);
 
