@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class WatchListQuery implements GraphQLQueryResolver {
                         .findFirst().get()
                         .daily_priceHistory.stream()
                         .filter(p -> p.time != null && p.time > days30Ago)
+                        .sorted(Comparator.comparing(p -> p.time))
                         .map(p -> p.close)
                         .collect(Collectors.toList());
             }
