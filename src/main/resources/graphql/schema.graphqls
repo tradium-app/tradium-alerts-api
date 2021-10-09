@@ -3,6 +3,8 @@ schema {
     mutation: Mutation
 }
 
+scalar UtcDate
+
 type User {
     id: String!
     name: String!
@@ -13,8 +15,8 @@ type User {
     countryCode: String
     timeZone: String
     ipAddress: String
-    createdDate: String
-    modifiedDate: String
+    createdDate: UtcDate
+    modifiedDate: UtcDate
 }
 
 type Stock {
@@ -38,7 +40,7 @@ type Stock {
     alertStatus: Boolean
     isOnWatchList: Boolean
     alerts: [Alert]
-    modifiedDate: String
+    modifiedDate: UtcDate
 }
 
 type Condition {
@@ -64,8 +66,8 @@ type Alert {
     title: String
     status: String
     conditions: [Condition]
-    createdDate: String
-    modifiedDate: String
+    createdDate: UtcDate
+    modifiedDate: UtcDate
 }
 
 input AlertInput {
@@ -97,7 +99,7 @@ type Article {
     symbol: String!
     headline: String
     link: String
-    createdDate: String
+    createdDate: UtcDate
 }
 
 type Response {
