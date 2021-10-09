@@ -2,7 +2,6 @@
 package com.tradiumapp.swingtradealerts.query;
 
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
-import com.tradiumapp.swingtradealerts.models.Alert;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.models.User;
@@ -15,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,13 +38,33 @@ public class WatchListQuery implements GraphQLQueryResolver {
             query2.addCriteria(Criteria.where("symbol").in(user.watchList));
             List<Stock> stocks = mongoTemplate.find(query2, Stock.class);
 
+            return stocks;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST.id)")
+    public List<Stock> getWatchListStockTrendlines() {
+        String userId = PrincipalManager.getCurrentUserId();
+
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("id").is(userId));
+        User user = mongoTemplate.findOne(query1, User.class);
+
+        if (user.watchList != null) {
+            List<Stock> stocks = new ArrayList<Stock>();
+
             Query query3 = new Query();
             query3.addCriteria(Criteria.where("symbol").in(user.watchList));
             List<StockHistory> stockHistories = mongoTemplate.find(query3, StockHistory.class);
 
             long days30Ago = Instant.now().minusSeconds(2_592_000).toEpochMilli();
 
-            for (Stock stock : stocks) {
+            for (StockHistory stockHistory : stockHistories) {
+                Stock stock = new Stock() {{
+                    symbol = stockHistory.symbol;
+                }};
                 stock.last30DaysClosePrices = stockHistories.stream()
                         .filter(h -> h.symbol.equals(stock.symbol))
                         .findFirst().get()
@@ -53,21 +73,8 @@ public class WatchListQuery implements GraphQLQueryResolver {
                         .sorted(Comparator.comparing(p -> p.time))
                         .map(p -> p.close)
                         .collect(Collectors.toList());
-            }
 
-            Query query4 = new Query();
-            query4.addCriteria(Criteria.where("userId").is(userId));
-            query4.addCriteria(Criteria.where("symbol").in(user.watchList));
-            List<Alert> alerts = mongoTemplate.find(query4, Alert.class);
-
-            for (Stock stock : stocks) {
-                stock.isBuyAlert = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
-                        && a.status == Alert.AlertStatus.On
-                        && a.signal == Alert.AlertSignal.Buy);
-
-                stock.isSellAlert = alerts.stream().anyMatch(a -> a.symbol.equals(stock.symbol)
-                        && a.status == Alert.AlertStatus.On
-                        && a.signal == Alert.AlertSignal.Sell);
+                stocks.add(stock);
             }
 
             return stocks;
