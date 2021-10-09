@@ -83,5 +83,8 @@ class SendAlertTask_52WeekHigh_Condition_Test extends AbstractTestNGSpringContex
         task.sendAlerts();
         verify(alertEmailSender).sendEmail(userCaptor.capture(), any())
         Assert.assertEquals(userCaptor.getValue().email, testUser.email)
+
+        Alert alert = alertRepository.findAll().asList().first()
+        Assert.assertEquals(alert.status, Alert.AlertStatus.On)
     }
 }

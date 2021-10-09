@@ -83,6 +83,7 @@ public class SendAlertTask {
                     shouldAlertFire = shouldAlertFire && isConditionMet(stocksMap.get(alert.symbol), condition, series);
                 }
 
+                Alert.AlertStatus originalStatus = alert.status;
                 if (shouldAlertFire) {
                     if (alert.status == Alert.AlertStatus.Off) {
                         alertsToBeFired.add(alert);
@@ -91,7 +92,7 @@ public class SendAlertTask {
                 } else {
                     alert.status = Alert.AlertStatus.Off;
                 }
-                updateAlert(alert, alert.status);
+                if (originalStatus != alert.status) updateAlert(alert, alert.status);
             } catch (Exception ex) {
                 logger.error("Error while checking alert: ", ex);
             }
