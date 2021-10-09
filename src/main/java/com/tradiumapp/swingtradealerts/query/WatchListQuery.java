@@ -2,6 +2,7 @@
 package com.tradiumapp.swingtradealerts.query;
 
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
+import com.tradiumapp.swingtradealerts.models.Article;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.models.User;
@@ -78,6 +79,27 @@ public class WatchListQuery implements GraphQLQueryResolver {
             }
 
             return stocks;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).WATCHLIST.id)")
+    public List<Article> getWatchListNews() {
+        String userId = PrincipalManager.getCurrentUserId();
+
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("id").is(userId));
+        User user = mongoTemplate.findOne(query1, User.class);
+
+        if (user.watchList != null) {
+            List<Stock> stocks = new ArrayList<Stock>();
+
+            Query query2 = new Query();
+            query2.addCriteria(Criteria.where("symbol").in(user.watchList));
+            List<Article> articles = mongoTemplate.find(query2, Article.class);
+
+            return articles;
         } else {
             return Collections.emptyList();
         }

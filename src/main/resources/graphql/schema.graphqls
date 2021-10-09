@@ -93,10 +93,10 @@ input ValueConfigInput {
     upDirection: Boolean
 }
 
-type Notification {
-    id: String!
-    alert: Alert
-    message: String!
+type Article {
+    symbol: String!
+    headline: String
+    link: String
 }
 
 type Response {
@@ -112,6 +112,7 @@ type Query {
     getAlerts(symbol: String): [Alert]
     getStockProfile(symbol: String): Stock
     getWatchListStockTrendlines: [Stock]
+    getWatchListNews: [Article]
 }
 
 type Mutation {

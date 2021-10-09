@@ -47,11 +47,11 @@ public class SaNewsParserTask {
                     String articleHeadline = headlineElement.text();
                     String articleLink = headlineElement.attributes().get("href");
 
-                    articles.add(new Article() {{
-                        this.symbol = articleSymbol.toUpperCase();
-                        this.headline = articleHeadline;
-                        this.link = "https://seekingalpha.com" + articleLink;
-                    }});
+                    Article article = new Article();
+                    article.symbol = articleSymbol.toUpperCase();
+                    article.headline = articleHeadline;
+                    article.link = "https://seekingalpha.com" + articleLink;
+                    articles.add(article);
                 }
             }
         }
