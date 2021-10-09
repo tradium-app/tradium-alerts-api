@@ -46,8 +46,9 @@ public class CalculateMetricsTask {
         List<Stock> stocks = (List<Stock>) stockRepository.findAll();
 
         for (StockHistory history : stockHistories) {
-            if (history.daily_priceHistory == null) continue;
             try {
+                if (history.daily_priceHistory == null || history.daily_priceHistory.size() < 21) continue;
+
                 List<StockHistory.StockPrice> stockPrices = history.daily_priceHistory.stream()
                         .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
                         .collect(Collectors.toList());
