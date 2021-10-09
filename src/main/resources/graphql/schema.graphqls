@@ -97,6 +97,7 @@ type Article {
     symbol: String!
     headline: String
     link: String
+    createdDate: String
 }
 
 type Response {
