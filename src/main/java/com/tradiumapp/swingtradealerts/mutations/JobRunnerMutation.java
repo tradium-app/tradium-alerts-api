@@ -1,10 +1,7 @@
 package com.tradiumapp.swingtradealerts.mutations;
 
 import com.tradiumapp.swingtradealerts.models.Response;
-import com.tradiumapp.swingtradealerts.scheduledtasks.CalculateMetricsTask;
-import com.tradiumapp.swingtradealerts.scheduledtasks.FetchAllStocksTask;
-import com.tradiumapp.swingtradealerts.scheduledtasks.FetchQuotesTask;
-import com.tradiumapp.swingtradealerts.scheduledtasks.SendAlertTask;
+import com.tradiumapp.swingtradealerts.scheduledtasks.*;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +26,15 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     @Autowired
     private CalculateMetricsTask calculateMetricsTask;
 
+    @Autowired
+    private SaNewsParserTask saNewsParserTask;
+
     public Response runJob(final float jobId) throws IOException {
         if(jobId == 1001) fetchAllStocksTask.fetchAllStocks();
         else if(jobId == 1002) fetchQuotesTask.fetchQuotes();
         else if(jobId == 1003) sendAlertTask.sendAlerts();
         else if(jobId == 1004) calculateMetricsTask.calculateMetrics();
+        else if(jobId == 1005) saNewsParserTask.fetchSaTopNews();
 
         logger.info("Job {} ran successfully.", jobId);
 
