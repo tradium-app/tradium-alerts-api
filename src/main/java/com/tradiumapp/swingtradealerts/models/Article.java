@@ -16,7 +16,11 @@ public class Article {
     public ObjectId id;
 
     public String symbol;
+
+    @Indexed(unique = true)
     public String headline;
+
+    @Indexed(unique = true)
     public String link;
 
     @CreatedDate
@@ -26,6 +30,6 @@ public class Article {
     public Date modifiedDate;
 
     @Field
-    @Indexed(name="expiresAtIndex", expireAfterSeconds = 2_592_000)
+    @Indexed(name = "expiresAtIndex", expireAfterSeconds = 2_592_000)
     Date expiresAt;
 }
