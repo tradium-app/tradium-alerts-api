@@ -46,7 +46,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         return new Response(true, "Alert save successful.", alert);
     }
 
-//    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
+    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response updateAlert(final Alert alert) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alert.id));
