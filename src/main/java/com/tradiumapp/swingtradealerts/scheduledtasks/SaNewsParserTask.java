@@ -28,7 +28,7 @@ public class SaNewsParserTask {
     private List<String> SaUrls = Arrays.asList("https://seekingalpha.com/market-news/top-news",
             "https://seekingalpha.com/market-news/all", "https://seekingalpha.com/market-news/technology");
 
-    @Scheduled(cron = "0 20 18 * * 1-5", zone = "EST")
+    @Scheduled(cron = "0 0 7-19 * * *", zone = "EST")
     public void fetchSaTopNews() throws IOException {
         List<Article> articles = new ArrayList<>();
 

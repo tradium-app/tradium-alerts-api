@@ -19,11 +19,13 @@ public class AlertEmailSender {
 
     public void sendEmail(User user, List<Alert> alerts) throws IOException {
         String buys = alerts.stream().filter(a -> a.signal == Alert.AlertSignal.Buy).limit(4)
-                .map(a -> a.symbol).collect(Collectors.joining(","));
+                .map(a -> a.symbol).distinct().collect(Collectors.joining(","));
         String sells = alerts.stream().filter(a -> a.signal == Alert.AlertSignal.Sell).limit(4)
-                .map(a -> a.symbol).collect(Collectors.joining(","));
+                .map(a -> a.symbol).distinct().collect(Collectors.joining(","));
 
-        String subject = "Buy " + buys + "..  and Sell " + sells + "..";
+        String subject = "";
+        if (buys.length() > 0) subject += "Buy " + buys + ".. ";
+        if (sells.length() > 0) subject += "Sell " + sells + "..";
 
         alerts.sort(Comparator.comparing((Alert a) -> a.signal));
 
@@ -33,16 +35,18 @@ public class AlertEmailSender {
             message += (i + 1) + ") " + alert.signal + " " + alert.symbol + ": " + alerts.get(i).title + " <br/> ";
 
             for (Condition condition : alerts.get(i).conditions) {
-                message += "&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
+                message += "&nbsp;&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
                         + (condition.operator == Condition.Operator.Not ? " ≠ " : " = ")
                         + " '" + condition.valueText + "'. <br/> ";
             }
             message += "<br/>";
         }
 
-        try {
-            sendGridEmailSender.sendEmail(user, subject, message);
-        } catch (Exception ignored) {
+        if (alerts.size() > 0) {
+            try {
+                sendGridEmailSender.sendEmail(user, subject, message);
+            } catch (Exception ignored) {
+            }
         }
     }
 }
