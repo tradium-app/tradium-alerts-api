@@ -46,7 +46,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         return new Response(true, "Alert save successful.", alert);
     }
 
-    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
+//    @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response updateAlert(final Alert alert) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alert.id));
@@ -55,6 +55,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         update.set("title", alert.title);
         update.set("signal", alert.signal);
         update.set("conditions", alert.conditions);
+        update.set("status", Alert.AlertStatus.Off);
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
         boolean success = result.getModifiedCount() == 1;

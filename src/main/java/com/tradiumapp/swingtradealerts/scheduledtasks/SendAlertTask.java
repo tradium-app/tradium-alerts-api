@@ -49,7 +49,7 @@ public class SendAlertTask {
     @Autowired
     AlertEmailSender alertEmailSender;
 
-    @Scheduled(cron = "0 0 19 * * *", zone = "EST")
+    @Scheduled(cron = "0 0 11,19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = loadStockHistory(alerts);
