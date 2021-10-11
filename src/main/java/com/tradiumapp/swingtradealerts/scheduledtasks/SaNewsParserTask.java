@@ -1,7 +1,6 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
 import com.tradiumapp.swingtradealerts.models.Article;
-import com.tradiumapp.swingtradealerts.repositories.ArticleRepository;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,6 +9,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +21,10 @@ import java.util.List;
 
 @Component
 public class SaNewsParserTask {
-    private static final Logger logger = LoggerFactory.getLogger(FetchRedditStocksTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(SaNewsParserTask.class);
 
     @Autowired
-    private ArticleRepository articleRepository;
+    MongoTemplate mongoTemplate;
 
     private List<String> SaUrls = Arrays.asList("https://seekingalpha.com/market-news/top-news",
             "https://seekingalpha.com/market-news/all", "https://seekingalpha.com/market-news/technology");
@@ -64,7 +65,9 @@ public class SaNewsParserTask {
         }
 
         try {
-            articleRepository.saveAll(articles);
+            mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Article.class)
+                    .insert(articles)
+                    .execute();
         } catch (Exception ignored) {
         }
     }
