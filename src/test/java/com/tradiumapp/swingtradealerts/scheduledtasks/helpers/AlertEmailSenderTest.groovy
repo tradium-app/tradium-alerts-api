@@ -6,6 +6,7 @@ import com.tradiumapp.swingtradealerts.models.IndicatorType
 import com.tradiumapp.swingtradealerts.models.User
 import org.mockito.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
 import org.testng.Assert
@@ -15,7 +16,7 @@ import org.testng.annotations.Test
 import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.verify
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DataMongoTest
 class AlertEmailSenderTest extends AbstractTestNGSpringContextTests {
     @Mock
     SendGridEmailSender sendGridEmailSender;
@@ -32,7 +33,7 @@ class AlertEmailSenderTest extends AbstractTestNGSpringContextTests {
         MockitoAnnotations.initMocks(this)
     }
 
-    @Test
+    @Test(groups = "unit")
     public void testSendBuyAlertEmail() {
         User user = new User()
         List<Alert> alerts = Arrays.asList(createATestAlert())
@@ -40,10 +41,10 @@ class AlertEmailSenderTest extends AbstractTestNGSpringContextTests {
         alertEmailSender.sendEmail(user, alerts)
 
         verify(sendGridEmailSender).sendEmail(any(), subjectCaptor.capture(), any())
-        Assert.assertEquals(subjectCaptor.getValue(), "Buy TEST1..")
+        Assert.assertEquals(subjectCaptor.getValue().trim(), "Buy TEST1..")
     }
 
-    @Test
+    @Test(groups = "unit")
     public void testSendBuySellAlertEmail() {
         User user = new User()
         List<Alert> alerts = new ArrayList<>(Arrays.asList(createATestAlert()))
