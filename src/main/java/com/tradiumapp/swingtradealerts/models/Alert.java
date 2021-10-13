@@ -1,7 +1,9 @@
 package com.tradiumapp.swingtradealerts.models;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 import java.util.List;
@@ -15,11 +17,15 @@ public class Alert {
     public AlertSignal signal;
     public String title;
     public AlertStatus status;
+    public boolean enabled;
 
     public List<Condition> conditions;
 
-    public Date createdDate = new Date();
-    public Date modifiedDate = new Date();
+    @CreatedDate
+    public Date createdDate;
+
+    @LastModifiedDate
+    public Date modifiedDate;
 
     public enum AlertSignal {
         Buy, Sell

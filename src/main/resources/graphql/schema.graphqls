@@ -65,6 +65,7 @@ type Alert {
     signal: String
     title: String
     status: String
+    enabled: Boolean
     conditions: [Condition]
     createdDate: UtcDate
     modifiedDate: UtcDate
@@ -75,7 +76,7 @@ input AlertInput {
     symbol: String!
     signal: String
     title: String
-    status: String
+    enabled: Boolean
     conditions: [ConditionInput]
 }
 

@@ -93,8 +93,6 @@ public class WatchListQuery implements GraphQLQueryResolver {
         User user = mongoTemplate.findOne(query1, User.class);
 
         if (user.watchList != null) {
-            List<Stock> stocks = new ArrayList<Stock>();
-
             Query query2 = new Query();
             query2.addCriteria(Criteria.where("symbol").in(user.watchList));
             List<Article> articles = mongoTemplate.find(query2, Article.class);

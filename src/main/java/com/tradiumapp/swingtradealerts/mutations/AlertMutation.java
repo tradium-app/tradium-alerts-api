@@ -55,6 +55,7 @@ public class AlertMutation implements GraphQLMutationResolver {
         update.set("title", alert.title);
         update.set("signal", alert.signal);
         update.set("conditions", alert.conditions);
+        update.set("enabled", alert.enabled);
         update.set("status", Alert.AlertStatus.Off);
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
