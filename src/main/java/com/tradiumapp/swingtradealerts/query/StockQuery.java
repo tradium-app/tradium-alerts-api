@@ -56,7 +56,7 @@ public class StockQuery implements GraphQLQueryResolver {
             query2.addCriteria(Criteria.where("userId").is(userId));
 
             User user = userRepository.findById(new ObjectId(userId)).get();
-            stock.isOnWatchList = user.watchList.contains(symbol);
+            stock.isOnWatchList = user.watchList != null && user.watchList.contains(symbol);
         }
 
         return stock;
