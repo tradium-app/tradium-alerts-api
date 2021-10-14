@@ -55,6 +55,7 @@ type Condition {
 
 type ValueConfig {
     length: Float
+    length2: Float
     value: Float
     upDirection: Boolean
 }
@@ -92,6 +93,7 @@ input ConditionInput {
 
 input ValueConfigInput {
     length: Float
+    length2: Float
     value: Float
     upDirection: Boolean
 }

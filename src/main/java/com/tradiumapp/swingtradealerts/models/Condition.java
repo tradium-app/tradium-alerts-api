@@ -19,6 +19,7 @@ public class Condition {
 
     public class ValueConfig {
         public int length;
+        public int length2;
         public String source;
         public float value;
         public boolean upDirection;

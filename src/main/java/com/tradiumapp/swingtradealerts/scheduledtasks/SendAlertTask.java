@@ -113,7 +113,7 @@ public class SendAlertTask {
     @NotNull
     private HashMap<String, List<StockHistory.StockPrice>> loadStockHistory(List<Alert> alerts) {
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = new HashMap<>();
-        long startEpoch = Instant.now().minusSeconds(2_592_000).toEpochMilli();
+        long startEpoch = Instant.now().minusSeconds(5_184_000).toEpochMilli();
 
         for (Alert alert : alerts) {
             if (!stockPricesMap.containsKey(alert.symbol)) {
@@ -152,10 +152,7 @@ public class SendAlertTask {
 
         boolean result = conditionChecker.checkCondition(condition, closePrice);
 
-        if (condition.operator == Condition.Operator.Not)
-            return !result;
-        else
-            return result;
+        return (condition.operator == Condition.Operator.Not) ? !result : result;
     }
 
     private boolean updateAlert(Alert alert, Alert.AlertStatus status) {
