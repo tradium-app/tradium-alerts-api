@@ -17,7 +17,7 @@ public class Alert {
     public AlertSignal signal;
     public String title;
     public AlertStatus status;
-    public boolean enabled;
+    public boolean enabled = true;
 
     public List<Condition> conditions;
 
