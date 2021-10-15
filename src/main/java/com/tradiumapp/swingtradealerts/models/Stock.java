@@ -1,10 +1,10 @@
 package com.tradiumapp.swingtradealerts.models;
 
-import com.google.gson.annotations.SerializedName;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,9 +28,14 @@ public class Stock {
 
     public boolean shouldRefresh;
     public boolean isEnabled;
+
+    @Transient
     public boolean alertStatus;
 
+    @Transient
     public boolean isBuyAlert;
+
+    @Transient
     public boolean isSellAlert;
 
     public float closeTime;
@@ -43,7 +48,8 @@ public class Stock {
     public float week52Low;
     public float ytdChangePercent;
 
-    public List<Float> last30DaysClosePrices;
+    @Transient
+    public List<Float> recentClosePrices;
 
     public float revenueGrowthQuarterlyYoy;
     public float revenueGrowthTTMYoy;
@@ -51,7 +57,7 @@ public class Stock {
     public float rsi;
     public StockTrend trend;
     public float redditRank;
-    public float tipranksUpside;
+    public float tipranksPriceTarget;
 
     public boolean isOnWatchList;
     public List<Alert> alerts;

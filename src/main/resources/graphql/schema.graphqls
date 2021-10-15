@@ -24,7 +24,7 @@ type Stock {
     symbol: String!
     company: String
     price: Float
-    last30DaysClosePrices: [Float]
+    recentClosePrices: [Float]
     changePercent: Float
     marketCap: Float
     peRatio: Float

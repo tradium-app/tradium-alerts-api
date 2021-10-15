@@ -60,17 +60,17 @@ public class WatchListQuery implements GraphQLQueryResolver {
             query3.addCriteria(Criteria.where("symbol").in(user.watchList));
             List<StockHistory> stockHistories = mongoTemplate.find(query3, StockHistory.class);
 
-            long days30Ago = Instant.now().minusSeconds(2_592_000).toEpochMilli();
+            long days60Ago = Instant.now().minusSeconds(5_184_000).toEpochMilli();
 
             for (StockHistory stockHistory : stockHistories) {
                 Stock stock = new Stock() {{
                     symbol = stockHistory.symbol;
                 }};
-                stock.last30DaysClosePrices = stockHistories.stream()
+                stock.recentClosePrices = stockHistories.stream()
                         .filter(h -> h.symbol.equals(stock.symbol))
                         .findFirst().get()
                         .daily_priceHistory.stream()
-                        .filter(p -> p.time != null && p.time > days30Ago)
+                        .filter(p -> p.time != null && p.time > days60Ago)
                         .sorted(Comparator.comparing(p -> p.time))
                         .map(p -> p.close)
                         .collect(Collectors.toList());

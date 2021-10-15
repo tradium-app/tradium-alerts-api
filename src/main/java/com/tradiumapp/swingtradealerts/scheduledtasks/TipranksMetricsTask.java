@@ -56,8 +56,7 @@ public class TipranksMetricsTask {
                         stock.sector = response.body().companyData.sector;
                         stock.industry = response.body().companyData.industry;
 
-                        float priceTarget = response.body().ptConsensus.stream().filter(p -> p.period == 0).findFirst().get().priceTarget;
-                        stock.tipranksUpside = ((priceTarget - stock.price) * 100) / stock.price;
+                        stock.tipranksPriceTarget = response.body().ptConsensus.stream().filter(p -> p.period == 0).findFirst().get().priceTarget;
                     } else {
                         logger.error("Tipranks api failed: {}", response.errorBody());
                     }
