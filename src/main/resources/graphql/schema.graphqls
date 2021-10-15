@@ -37,6 +37,7 @@ type Stock {
     rsi: Float
     trend: String
     redditRank: Float
+    tipranksPriceTarget: Float
     alertStatus: Boolean
     isOnWatchList: Boolean
     alerts: [Alert]
