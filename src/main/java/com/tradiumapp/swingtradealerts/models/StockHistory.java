@@ -2,7 +2,9 @@ package com.tradiumapp.swingtradealerts.models;
 
 import com.google.gson.annotations.SerializedName;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.Date;
@@ -19,7 +21,10 @@ public class StockHistory {
     public boolean shouldRefresh;
     public boolean isEnabled;
 
+    @CreatedDate
     public Date createdDate = new Date();
+
+    @LastModifiedDate
     public Date modifiedDate = new Date();
 
     public class StockPrice {

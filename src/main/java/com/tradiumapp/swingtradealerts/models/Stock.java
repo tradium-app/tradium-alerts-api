@@ -2,7 +2,9 @@ package com.tradiumapp.swingtradealerts.models;
 
 import com.google.gson.annotations.SerializedName;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,6 +20,9 @@ public class Stock {
     public String symbol;
 
     public String company;
+    public String sector;
+    public String industry;
+
     public float price;
     public float changePercent;
 
@@ -46,11 +51,15 @@ public class Stock {
     public float rsi;
     public StockTrend trend;
     public float redditRank;
+    public float tipranksUpside;
 
     public boolean isOnWatchList;
     public List<Alert> alerts;
 
+    @CreatedDate
     public Date createdDate = new Date();
+
+    @LastModifiedDate
     public Date modifiedDate = new Date();
 
     public enum StockTrend {

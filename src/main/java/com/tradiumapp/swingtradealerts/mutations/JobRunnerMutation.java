@@ -29,12 +29,16 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     @Autowired
     private SaNewsParserTask saNewsParserTask;
 
+    @Autowired
+    private TipranksMetricsTask tipranksMetricsTask;
+
     public Response runJob(final float jobId) throws IOException {
         if(jobId == 1001) fetchAllStocksTask.fetchAllStocks();
         else if(jobId == 1002) fetchQuotesTask.fetchQuotes();
         else if(jobId == 1003) sendAlertTask.sendAlerts();
         else if(jobId == 1004) calculateMetricsTask.calculateMetrics();
         else if(jobId == 1005) saNewsParserTask.fetchSaTopNews();
+        else if(jobId == 1006) tipranksMetricsTask.getData();
 
         logger.info("Job {} ran successfully.", jobId);
 
