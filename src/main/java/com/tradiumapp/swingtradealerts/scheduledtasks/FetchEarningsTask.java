@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 public class FetchEarningsTask {
     private static final Logger logger = LoggerFactory.getLogger(FetchEarningsTask.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
     private static final SimpleDateFormat iexDateFormat = new SimpleDateFormat("YYYYMMdd");
 
     @Autowired
@@ -53,7 +53,7 @@ public class FetchEarningsTask {
                     query.addCriteria(Criteria.where("symbol").is(iexEarning.symbol));
 
                     Update update = new Update();
-                    update.set("nextEarningsDate", iexEarning.reportDate);
+                    update.set("nextEarningsDate", dateFormat.parse(iexEarning.reportDate));
 
                     mongoTemplate.updateFirst(query, update, Stock.class);
                 }

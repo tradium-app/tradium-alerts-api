@@ -34,6 +34,7 @@ type Stock {
     beta: Float
     revenueGrowthQuarterlyYoy: Float
     revenueGrowthTTMYoy: Float
+    nextEarningsDate: UtcDate
     rsi: Float
     trend: String
     redditRank: Float

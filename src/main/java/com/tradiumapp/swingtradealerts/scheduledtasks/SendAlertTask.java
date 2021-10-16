@@ -147,6 +147,8 @@ public class SendAlertTask {
             conditionChecker = new Week52HighConditionChecker(stock);
         } else if (condition.indicator.equals(IndicatorType.week52low)) {
             conditionChecker = new Week52LowConditionChecker(stock);
+        } else if (condition.indicator.equals(IndicatorType.earnings)) {
+            conditionChecker = new EarningsConditionChecker(stock);
         } else {
             conditionChecker = new RedditTrendingConditionChecker(stock);
         }
