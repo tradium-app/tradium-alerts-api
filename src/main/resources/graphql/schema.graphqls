@@ -69,6 +69,7 @@ type Alert {
     status: String
     enabled: Boolean
     conditions: [Condition]
+    alertOnDate: UtcDate
     createdDate: UtcDate
     modifiedDate: UtcDate
 }

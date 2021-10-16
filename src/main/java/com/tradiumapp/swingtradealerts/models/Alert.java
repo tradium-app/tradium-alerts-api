@@ -16,7 +16,9 @@ public class Alert {
     public String symbol;
     public AlertSignal signal;
     public String title;
+
     public AlertStatus status;
+    public Date alertOnDate;
     public boolean enabled = true;
 
     public List<Condition> conditions;
@@ -32,6 +34,6 @@ public class Alert {
     }
 
     public enum AlertStatus {
-        On, Off, Disabled
+        On, Off
     }
 }

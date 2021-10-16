@@ -7,6 +7,7 @@ import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import com.tradiumapp.swingtradealerts.scheduledtasks.helpers.AlertEmailSender;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class SendAlertTask {
 
     @Scheduled(cron = "0 0 11,19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
-        List<Alert> alerts = alertRepository.findByStatusNot(Alert.AlertStatus.Disabled);
+        List<Alert> alerts = alertRepository.findByEnabled(true);
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = loadStockHistory(alerts);
 
         HashMap<String, Stock> stocksMap = new HashMap<>();
@@ -92,7 +93,7 @@ public class SendAlertTask {
                 } else {
                     alert.status = Alert.AlertStatus.Off;
                 }
-                if (originalStatus != alert.status) updateAlert(alert, alert.status);
+                if (originalStatus != alert.status) updateAlertStatus(alert, alert.status);
             } catch (Exception ex) {
                 logger.error("Error while checking alert: ", ex);
             }
@@ -155,12 +156,13 @@ public class SendAlertTask {
         return (condition.operator == Condition.Operator.Not) ? !result : result;
     }
 
-    private boolean updateAlert(Alert alert, Alert.AlertStatus status) {
+    private boolean updateAlertStatus(Alert alert, Alert.AlertStatus status) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(alert.id));
 
         Update update = new Update();
         update.set("status", status);
+        if (status == Alert.AlertStatus.On) update.set("alertOnDate", new Date());
         update.set("modifiedDate", new Date());
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);

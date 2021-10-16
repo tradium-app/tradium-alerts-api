@@ -4,6 +4,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.tradiumapp.swingtradealerts.auth.PrincipalManager;
 import com.tradiumapp.swingtradealerts.models.Alert;
+import com.tradiumapp.swingtradealerts.models.Condition;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.models.User;
 import com.tradiumapp.swingtradealerts.repositories.AlertRepository;
@@ -21,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -56,7 +58,13 @@ public class AlertMutation implements GraphQLMutationResolver {
         update.set("signal", alert.signal);
         update.set("conditions", alert.conditions);
         update.set("enabled", alert.enabled);
-        update.set("status", Alert.AlertStatus.Off);
+
+        Alert savedAlert = mongoTemplate.findOne(query, Alert.class);
+        boolean areConditionsSame = areConditionsSame(savedAlert.conditions, alert.conditions);
+        if (!areConditionsSame) {
+            update.set("status", Alert.AlertStatus.Off);
+        }
+        update.set("modifiedDate", new Date());
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, Alert.class);
         boolean success = result.getModifiedCount() == 1;
@@ -67,6 +75,16 @@ public class AlertMutation implements GraphQLMutationResolver {
         } else {
             return new Response(false, "Alert update failed.");
         }
+    }
+
+    private boolean areConditionsSame(List<Condition> conditions1, List<Condition> conditions2) {
+        for (Condition condition1 : conditions1) {
+            if (!conditions2.stream().anyMatch(c -> c.indicator == condition1.indicator
+                    && c.value.equals(condition1.value))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
