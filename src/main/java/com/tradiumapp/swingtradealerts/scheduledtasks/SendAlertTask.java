@@ -95,7 +95,7 @@ public class SendAlertTask {
                 }
                 if (originalStatus != alert.status) updateAlertStatus(alert, alert.status);
             } catch (Exception ex) {
-                logger.error("Error while checking alert: ", ex);
+                logger.error("Error while checking alert id {}: ", alert.id, ex);
             }
         }
 
