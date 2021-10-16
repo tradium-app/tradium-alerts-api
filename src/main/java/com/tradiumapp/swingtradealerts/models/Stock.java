@@ -53,13 +53,17 @@ public class Stock {
 
     public float revenueGrowthQuarterlyYoy;
     public float revenueGrowthTTMYoy;
+    public Date nextEarningsDate;
 
     public float rsi;
     public StockTrend trend;
     public float redditRank;
     public float tipranksPriceTarget;
 
+    @Transient
     public boolean isOnWatchList;
+
+    @Transient
     public List<Alert> alerts;
 
     @CreatedDate
