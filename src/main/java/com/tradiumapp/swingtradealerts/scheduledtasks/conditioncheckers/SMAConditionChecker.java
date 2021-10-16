@@ -11,9 +11,9 @@ public class SMAConditionChecker implements ConditionChecker {
         SMAIndicator indicator = new SMAIndicator(priceIndicator, condition.valueConfig.length);
         float smaValue = indicator.getValue(indicator.getBarSeries().getBarCount() - 1).floatValue();
 
-        if (condition.valueConfig.upDirection && lastValue > (1 + condition.valueConfig.value) * smaValue) {
+        if (condition.valueConfig.upDirection && lastValue > (1 + condition.valueConfig.value / 100) * smaValue) {
             return true;
-        } else if (!condition.valueConfig.upDirection && lastValue < (1 - condition.valueConfig.value) * smaValue) {
+        } else if (!condition.valueConfig.upDirection && lastValue < (1 - condition.valueConfig.value / 100) * smaValue) {
             return true;
         } else {
             return false;

@@ -20,9 +20,9 @@ public class EMAConditionChecker implements ConditionChecker {
             return condition.valueConfig.upDirection ? emaValue > emaValue2 : emaValue < emaValue2;
         }
 
-        if (condition.valueConfig.upDirection && lastValue > (1 + condition.valueConfig.value) * emaValue) {
+        if (condition.valueConfig.upDirection && lastValue > (1 + condition.valueConfig.value / 100) * emaValue) {
             return true;
-        } else if (!condition.valueConfig.upDirection && lastValue < (1 - condition.valueConfig.value) * emaValue) {
+        } else if (!condition.valueConfig.upDirection && lastValue < (1 - condition.valueConfig.value / 100) * emaValue) {
             return true;
         } else {
             return false;
