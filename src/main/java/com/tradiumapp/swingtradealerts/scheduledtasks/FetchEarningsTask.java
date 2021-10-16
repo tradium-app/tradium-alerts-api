@@ -3,6 +3,8 @@ package com.tradiumapp.swingtradealerts.scheduledtasks;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.services.IexCloudService;
 import com.tradiumapp.swingtradealerts.services.models.IexcloudEarningsResponse;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +44,24 @@ public class FetchEarningsTask {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DATE, 15);
-            String oneMonthLater = iexDateFormat.format(cal.getTime());
+            String endDate = iexDateFormat.format(cal.getTime());
 
-            Response<List<IexcloudEarningsResponse>> iexResponse = iexService.fetchUpcomingEarnings(today, oneMonthLater, iexToken).execute();
+            Response<List<IexcloudEarningsResponse>> iexResponse = iexService.fetchUpcomingEarnings(today, endDate, iexToken).execute();
             if (iexResponse.isSuccessful()) {
                 List<IexcloudEarningsResponse> earningsResponses = iexResponse.body();
 
-                for(IexcloudEarningsResponse iexEarning :earningsResponses) {
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("symbol").is(iexEarning.symbol));
+                for (IexcloudEarningsResponse iexEarning : earningsResponses) {
+                    DateTime reportDate = DateTime.parse(iexEarning.reportDate);
 
-                    Update update = new Update();
-                    update.set("nextEarningsDate", dateFormat.parse(iexEarning.reportDate));
+                    if (Days.daysBetween(DateTime.now(), reportDate).getDays() > 0) {
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("symbol").is(iexEarning.symbol));
 
-                    mongoTemplate.updateFirst(query, update, Stock.class);
+                        Update update = new Update();
+                        update.set("nextEarningsDate", reportDate);
+
+                        mongoTemplate.updateFirst(query, update, Stock.class);
+                    }
                 }
             } else {
                 logger.error("Error while fetching stocks: {}", iexResponse.errorBody().string());
