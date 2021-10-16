@@ -7,7 +7,6 @@ import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import com.tradiumapp.swingtradealerts.scheduledtasks.helpers.AlertEmailSender;
-import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +52,7 @@ public class SendAlertTask {
     @Scheduled(cron = "0 0 11,19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByEnabled(true);
+        alerts = alerts.stream().filter(a -> a.title.equals("test alert")).collect(Collectors.toList());
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = loadStockHistory(alerts);
 
         HashMap<String, Stock> stocksMap = new HashMap<>();
@@ -147,6 +147,8 @@ public class SendAlertTask {
             conditionChecker = new Week52HighConditionChecker(stock);
         } else if (condition.indicator.equals(IndicatorType.week52low)) {
             conditionChecker = new Week52LowConditionChecker(stock);
+        } else if (condition.indicator.equals(IndicatorType.sr)) {
+            conditionChecker = new PivotPointConditionChecker();
         } else {
             conditionChecker = new RedditTrendingConditionChecker(stock);
         }
