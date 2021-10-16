@@ -61,7 +61,7 @@ public class AlertMutation implements GraphQLMutationResolver {
 
         Alert savedAlert = mongoTemplate.findOne(query, Alert.class);
         boolean areConditionsSame = areConditionsSame(savedAlert.conditions, alert.conditions);
-        if (!areConditionsSame) {
+        if (!areConditionsSame || !alert.enabled) {
             update.set("status", Alert.AlertStatus.Off);
         }
         update.set("modifiedDate", new Date());
