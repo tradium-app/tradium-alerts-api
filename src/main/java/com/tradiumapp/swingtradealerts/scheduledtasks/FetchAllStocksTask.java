@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import retrofit2.Response;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class FetchAllStocksTask {
@@ -31,15 +31,25 @@ public class FetchAllStocksTask {
     private String iexToken;
 
     @Scheduled(cron = "0 0 0 * * 1", zone = "EST")
-    public void fetchAllStocks() throws IOException {
-        Response<List<Stock>> fetchResponse = iexService.listStocks(iexToken).execute();
-        if (fetchResponse.isSuccessful()) {
-            List<Stock> stocks = fetchResponse.body();
-            stockRepository.saveAll(stocks);
-            logger.info("stocks fetched: {}", stocks.get(0).company);
-        } else {
-            logger.error("Error while fetching stocks: {}", fetchResponse.errorBody().string());
+    public void fetchAllStocks() {
+        try {
+            Response<List<Stock>> fetchResponse = iexService.listStocks(iexToken).execute();
+            if (fetchResponse.isSuccessful()) {
+                List<Stock> allStocks = fetchResponse.body();
+                List<Stock> savedStocks = (List<Stock>) stockRepository.findAll();
+
+                List<Stock> newStocks = allStocks.stream().filter(s -> !savedStocks.stream().anyMatch(ss -> ss.symbol.equals(s.symbol))).collect(Collectors.toList());
+
+                stockRepository.saveAll(newStocks);
+                logger.info("stocks fetched: {}", allStocks.get(0).company);
+            } else {
+                logger.error("Error while fetching stocks: {}", fetchResponse.errorBody().string());
+            }
+
+            logger.info("FetchAllStocksTask ran at {}", dateFormat.format(new Date()));
+        } catch (Exception ex) {
+            logger.error("Error running FetchAllStocksTask: ", ex);
         }
-        logger.info("The time is now {}", dateFormat.format(new Date()));
+
     }
 }
