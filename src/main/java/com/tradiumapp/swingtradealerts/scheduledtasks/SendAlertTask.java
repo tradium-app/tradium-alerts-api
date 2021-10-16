@@ -53,7 +53,6 @@ public class SendAlertTask {
     @Scheduled(cron = "0 0 11,19 * * *", zone = "EST")
     public void sendAlerts() throws IOException {
         List<Alert> alerts = alertRepository.findByEnabled(true);
-        alerts = alerts.stream().filter(a -> a.id.equals(new ObjectId("616ac9231294775efa1d877c"))).collect(Collectors.toList());
         HashMap<String, List<StockHistory.StockPrice>> stockPricesMap = loadStockHistory(alerts);
 
         HashMap<String, Stock> stocksMap = new HashMap<>();
