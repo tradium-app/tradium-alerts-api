@@ -39,6 +39,7 @@ type Stock {
     trend: String
     redditRank: Float
     tipranksPriceTarget: Float
+    sr: [Float]
     alertStatus: Boolean
     isOnWatchList: Boolean
     alerts: [Alert]

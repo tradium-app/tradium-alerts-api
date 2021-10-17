@@ -59,6 +59,7 @@ public class Stock {
     public StockTrend trend;
     public float redditRank;
     public float tipranksPriceTarget;
+    public List<Float> sr;
 
     @Transient
     public boolean isOnWatchList;
