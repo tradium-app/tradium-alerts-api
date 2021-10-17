@@ -1,0 +1,22 @@
+# ide files
+.idea/*
+
+# temp files
+__pycache__/
+config.ini
+.pytest_cache
+
+# data files
+data/*
+!.keep
+
+# compiled files
+*.pyc
+
+# settings files
+.env
+.vscode/*
+
+# models
+*.h5
+*/structured_data_regressor/*
