@@ -3,16 +3,21 @@ import sys
 
 sys.path.insert(0, "../")
 from environs import Env
+import gc
+import time
 from pytz import utc
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.mongodb import MongoDBJobStore
 
-# from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED
 from sr_calculator.sr_calculator import SRCalculator
 from pymongo import MongoClient
+import logging
+
+logging.root.setLevel(logging.NOTSET)
+
 
 # %%
 
@@ -51,6 +56,6 @@ scheduler.add_listener(on_job_completed, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
 scheduler.start()
 
-# while True:
-#     time.sleep(10)
-#     gc.collect()
+while True:
+    time.sleep(10)
+    gc.collect()
