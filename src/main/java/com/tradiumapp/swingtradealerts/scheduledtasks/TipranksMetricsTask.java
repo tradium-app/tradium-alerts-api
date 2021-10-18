@@ -43,6 +43,7 @@ public class TipranksMetricsTask {
             }
 
             List<Stock> stocks = stockRepository.findBySymbolIn(new ArrayList<>(symbols));
+            Collections.shuffle(stocks);
             List<Stock> updatedStocks = new ArrayList<>();
 
             long epochTime = Instant.now().toEpochMilli();
@@ -62,7 +63,8 @@ public class TipranksMetricsTask {
                     }
 
                     updatedStocks.add(stock);
-                } catch (Exception ignored) {
+                } catch (Exception ex) {
+                    logger.error("Error while pulling TipRanks for stock {}", stock.symbol, ex);
                 }
 
                 Thread.sleep(30000);
