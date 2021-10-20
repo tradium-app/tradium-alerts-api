@@ -14,7 +14,7 @@ RUN mvn -f pom.xml clean package
 # Package stage
 #
 FROM openjdk:8-jre-slim
-COPY --from=build /home/app/target/swing-trade-alerts-0.0.1-SNAPSHOT.jar /usr/local/lib/swing-trade-alerts.jar
+COPY --from=build /home/app/target/tradium-alerts-0.0.1-SNAPSHOT.jar /usr/local/lib/tradium-alerts.jar
 EXPOSE 8080
 
-CMD java -Dserver.port=$PORT -jar "/usr/local/lib/swing-trade-alerts.jar"
+CMD java -Dserver.port=$PORT -jar "/usr/local/lib/tradium-alerts.jar"

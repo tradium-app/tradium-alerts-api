@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tradiumapp</groupId>
-	<artifactId>swing-trade-alerts</artifactId>
+	<artifactId>tradium-alerts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>swing-trade-alerts</name>
+	<name>tradium-alerts</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
