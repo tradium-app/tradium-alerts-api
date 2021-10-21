@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public enum PermissionDefinition {
     WATCHLIST("permission.watchlist.admin", "Watchlist view/edit/delete"),
-    ALERT("permission.alert.admin", "Alert create"),
+    ALERT("permission.alert.admin", "Alert create/edit/delete"),
     STOCK_PROFILE_VIEW("permission.stock_profile.view", "View stock profile");
 
     public final String id;
