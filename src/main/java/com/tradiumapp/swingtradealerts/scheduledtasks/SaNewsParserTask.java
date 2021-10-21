@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -68,7 +69,10 @@ public class SaNewsParserTask {
             mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Article.class)
                     .insert(articles)
                     .execute();
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            if(!(ex instanceof BulkOperationException)){
+                logger.error("Erro while running SaNewsParserTask: ", ex);
+            }
         }
     }
 }

@@ -24,12 +24,9 @@ public class Article {
     public String link;
 
     @CreatedDate
+    @Indexed(name = "createdDate", expireAfterSeconds = 2_592_000)
     public Date createdDate;
 
     @LastModifiedDate
     public Date modifiedDate;
-
-    @Field
-    @Indexed(name = "expiresAtIndex", expireAfterSeconds = 2_592_000)
-    Date expiresAt;
 }
