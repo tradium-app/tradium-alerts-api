@@ -45,17 +45,34 @@ public class FetchStockMetricsTask {
             }
 
             List<Stock> stocks = stockRepository.findBySymbolIn(new ArrayList<>(symbols));
+            Collections.shuffle(stocks);
             List<Stock> updatedStocks = new ArrayList<>();
 
             for (Stock stock : stocks) {
                 Response<FinnhubMetricResponse> fetchResponse = finnhubService.getStockMetrics(stock.symbol, apiKey).execute();
 
-                stock.beta = fetchResponse.body().metric.beta;
-                stock.marketCap = fetchResponse.body().metric.marketCapitalization;
-                stock.week52High = fetchResponse.body().metric._52WeekHigh;
-                stock.week52Low = fetchResponse.body().metric._52WeekLow;
-                stock.revenueGrowthQuarterlyYoy = fetchResponse.body().metric.revenueGrowthQuarterlyYoy;
-                stock.revenueGrowthTTMYoy = fetchResponse.body().metric.revenueGrowthTTMYoy;
+                FinnhubMetricResponse response = fetchResponse.body();
+                stock.beta = response.metric.beta;
+                stock.marketCap = response.metric.marketCapitalization;
+                stock.week52High = response.metric._52WeekHigh;
+                stock.week52Low = response.metric._52WeekLow;
+                stock.revenueGrowthQuarterlyYoy = response.metric.revenueGrowthQuarterlyYoy;
+                stock.revenueGrowthTTMYoy = response.metric.revenueGrowthTTMYoy;
+
+                if (response.series.quarterly != null) {
+                    stock.grossMargin = response.series.quarterly.grossMargin.get(0).v;
+                    stock.salesPerShareTTM = response.series.quarterly.salesPerShare.stream()
+                            .sorted(Comparator.comparing(m -> m.period, Comparator.reverseOrder()))
+                            .limit(4)
+                            .map(s -> s.v)
+                            .reduce(0F, Float::sum);
+                    stock.earningsPerShareTTM = response.series.quarterly.eps.stream()
+                            .sorted(Comparator.comparing(m -> m.period, Comparator.reverseOrder()))
+                            .limit(4)
+                            .map(s -> s.v)
+                            .reduce(0F, Float::sum);
+                }
+
 
                 updatedStocks.add(stock);
             }

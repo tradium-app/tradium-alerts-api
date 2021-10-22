@@ -53,6 +53,16 @@ public class Stock {
 
     public float revenueGrowthQuarterlyYoy;
     public float revenueGrowthTTMYoy;
+
+    @Transient
+    public float priceToSalesTTM;
+    public float salesPerShareTTM;
+
+    @Transient
+    public float priceToEarningsTTM;
+    public float earningsPerShareTTM;
+
+    public float grossMargin;
     public Date nextEarningsDate;
 
     public float rsi;
