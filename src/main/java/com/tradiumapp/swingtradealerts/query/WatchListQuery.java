@@ -38,6 +38,10 @@ public class WatchListQuery implements GraphQLQueryResolver {
             Query query2 = new Query();
             query2.addCriteria(Criteria.where("symbol").in(user.watchList));
             List<Stock> stocks = mongoTemplate.find(query2, Stock.class);
+            for (Stock stock : stocks) {
+                if (stock.salesPerShareTTM != 0) stock.priceToSalesTTM = stock.price / stock.salesPerShareTTM;
+                if (stock.earningsPerShareTTM != 0) stock.priceToEarningsTTM = stock.price / stock.earningsPerShareTTM;
+            }
 
             return stocks;
         } else {
