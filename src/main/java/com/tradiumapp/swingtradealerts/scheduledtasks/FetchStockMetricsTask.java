@@ -52,21 +52,24 @@ public class FetchStockMetricsTask {
                 Response<FinnhubMetricResponse> fetchResponse = finnhubService.getStockMetrics(stock.symbol, apiKey).execute();
 
                 FinnhubMetricResponse response = fetchResponse.body();
-                stock.beta = response.metric.beta;
-                stock.marketCap = response.metric.marketCapitalization;
-                stock.week52High = response.metric._52WeekHigh;
-                stock.week52Low = response.metric._52WeekLow;
-                stock.revenueGrowthQuarterlyYoy = response.metric.revenueGrowthQuarterlyYoy;
-                stock.revenueGrowthTTMYoy = response.metric.revenueGrowthTTMYoy;
+                if(response.metric != null) {
+                    stock.beta = response.metric.beta;
+                    stock.marketCap = response.metric.marketCapitalization;
+                    stock.week52High = response.metric._52WeekHigh;
+                    stock.week52Low = response.metric._52WeekLow;
+                    stock.revenueGrowthQuarterlyYoy = response.metric.revenueGrowthQuarterlyYoy;
+                    stock.revenueGrowthTTMYoy = response.metric.revenueGrowthTTMYoy;
+                }
 
-                if (response.series.quarterly != null) {
-                    stock.grossMargin = response.series.quarterly.grossMargin.get(0).v;
-                    stock.salesPerShareTTM = response.series.quarterly.salesPerShare.stream()
+                FinnhubMetricResponse.Series.Quarterly quarterly = response.series.quarterly;
+                if (quarterly != null && quarterly.grossMargin != null) {
+                    if (quarterly.grossMargin.size() > 0) stock.grossMargin = quarterly.grossMargin.get(0).v;
+                    if (quarterly.salesPerShare.size() > 0) stock.salesPerShareTTM = quarterly.salesPerShare.stream()
                             .sorted(Comparator.comparing(m -> m.period, Comparator.reverseOrder()))
                             .limit(4)
                             .map(s -> s.v)
                             .reduce(0F, Float::sum);
-                    stock.earningsPerShareTTM = response.series.quarterly.eps.stream()
+                    if (quarterly.salesPerShare.size() > 0) stock.earningsPerShareTTM = quarterly.eps.stream()
                             .sorted(Comparator.comparing(m -> m.period, Comparator.reverseOrder()))
                             .limit(4)
                             .map(s -> s.v)
