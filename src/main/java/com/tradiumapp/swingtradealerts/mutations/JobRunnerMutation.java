@@ -27,6 +27,9 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     private CalculateMetricsTask calculateMetricsTask;
 
     @Autowired
+    private FetchStockMetricsTask fetchStockMetricsTask;
+
+    @Autowired
     private SaNewsParserTask saNewsParserTask;
 
     @Autowired
@@ -43,6 +46,7 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
         else if(jobId == 1005) saNewsParserTask.fetchSaTopNews();
         else if(jobId == 1006) tipranksMetricsTask.getData();
         else if(jobId == 1007) fetchEarningsTask.fetchUpcomingEarnings();
+        else if(jobId == 1008) fetchStockMetricsTask.fetchStockMetrics();
 
         logger.info("Job {} ran successfully.", jobId);
 
