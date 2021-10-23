@@ -25,6 +25,7 @@ type Stock {
     company: String
     price: Float
     recentClosePrices: [Float]
+    nextPredictions: [Float]
     changePercent: Float
     marketCap: Float
     peRatio: Float

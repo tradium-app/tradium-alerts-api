@@ -18,6 +18,7 @@ public class StockHistory {
     public String symbol;
 
     public List<StockHistory.StockPrice> daily_priceHistory;
+    public List<StockHistory.StockPrice> model_predictions;
     public boolean shouldRefresh;
     public boolean isEnabled;
 

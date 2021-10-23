@@ -70,14 +70,30 @@ public class WatchListQuery implements GraphQLQueryResolver {
                 Stock stock = new Stock() {{
                     symbol = stockHistory.symbol;
                 }};
-                stock.recentClosePrices = stockHistories.stream()
-                        .filter(h -> h.symbol.equals(stock.symbol))
-                        .findFirst().get()
-                        .daily_priceHistory.stream()
-                        .filter(p -> p.time != null && p.time > days60Ago)
-                        .sorted(Comparator.comparing(p -> p.time))
-                        .map(p -> p.close)
-                        .collect(Collectors.toList());
+
+                try {
+                    stock.recentClosePrices = stockHistories.stream()
+                            .filter(h -> h.symbol.equals(stock.symbol))
+                            .findFirst().get()
+                            .daily_priceHistory.stream()
+                            .filter(p -> p.time != null && p.time > days60Ago)
+                            .sorted(Comparator.comparing(p -> p.time))
+                            .map(p -> p.close)
+                            .collect(Collectors.toList());
+                } catch (Exception ignored) {
+                }
+
+                try {
+                    stock.nextPredictions = stockHistories.stream()
+                            .filter(h -> h.symbol.equals(stock.symbol))
+                            .findFirst().get()
+                            .model_predictions.stream()
+                            .sorted(Comparator.comparing(p -> p.time))
+                            .map(p -> p.close)
+                            .collect(Collectors.toList());
+                } catch (Exception ignored) {
+                }
+
 
                 stocks.add(stock);
             }
