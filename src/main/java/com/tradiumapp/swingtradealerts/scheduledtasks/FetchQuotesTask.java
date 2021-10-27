@@ -51,31 +51,34 @@ public class FetchQuotesTask {
             List<Stock> updatedStocks = new ArrayList<>();
             List<StockHistory> updatedStockHistories = new ArrayList<>();
 
-            assert response.body().results != null;
-            response.body().results.forEach((stockPrice) -> {
-                Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
-                Optional<StockHistory> stockHistoryOptional = stockHistories.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+            if (response.isSuccessful() && response.body() != null && response.body().results != null) {
+                response.body().results.forEach((stockPrice) -> {
+                    Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+                    Optional<StockHistory> stockHistoryOptional = stockHistories.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
 
-                Stock stock = stockOptional.orElseGet(Stock::new);
-                StockHistory stockHistory = stockHistoryOptional.orElseGet(StockHistory::new);
+                    Stock stock = stockOptional.orElseGet(Stock::new);
+                    StockHistory stockHistory = stockHistoryOptional.orElseGet(StockHistory::new);
 
-                stock.symbol = stockPrice.symbol;
-                if (stock.price > 0) stock.changePercent = (stockPrice.close - stock.price) * 100 / stock.price;
-                stock.price = stockPrice.close;
-                updatedStocks.add(stock);
+                    stock.symbol = stockPrice.symbol;
+                    if (stock.price > 0) stock.changePercent = (stockPrice.close - stock.price) * 100 / stock.price;
+                    stock.price = stockPrice.close;
+                    updatedStocks.add(stock);
 
-                stockHistory.symbol = stockPrice.symbol;
-                if (stockHistory.daily_priceHistory == null) stockHistory.daily_priceHistory = new ArrayList<>();
-                stockHistory.daily_priceHistory.add(stockPrice);
-                updatedStockHistories.add(stockHistory);
-            });
+                    stockHistory.symbol = stockPrice.symbol;
+                    if (stockHistory.daily_priceHistory == null) stockHistory.daily_priceHistory = new ArrayList<>();
+                    stockHistory.daily_priceHistory.add(stockPrice);
+                    updatedStockHistories.add(stockHistory);
+                });
 
-            stockRepository.saveAll(updatedStocks);
-            stockHistoryRepository.saveAll(updatedStockHistories);
+                stockRepository.saveAll(updatedStocks);
+                stockHistoryRepository.saveAll(updatedStockHistories);
 
-            logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
+                logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
+            } else {
+                logger.error("Error response from Polygon Api.", response.errorBody());
+            }
         } catch (Exception ex) {
-            logger.error("Error while running FetchQuotesTask", ex);
+            logger.error("Error while running FetchQuotesTask. ", ex);
         }
     }
 }
