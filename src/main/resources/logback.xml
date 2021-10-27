@@ -13,6 +13,8 @@
             <accessToken>${ROLLBAR_ACCESS_TOKEN}</accessToken>
         </appender>
 
+        <logger name="com.tradiumapp.swingtradealerts.scheduledtasks" level="TRACE"/>
+
         <root level="INFO">
             <appender-ref ref="ROLLBAR" />
         </root>

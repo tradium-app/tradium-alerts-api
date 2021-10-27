@@ -75,7 +75,7 @@ public class FetchQuotesTask {
 
                 logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
             } else {
-                logger.error("Error response from Polygon Api.", response.errorBody());
+                logger.error("Error response from Polygon Api for day {}. {}", day, response);
             }
         } catch (Exception ex) {
             logger.error("Error while running FetchQuotesTask. ", ex);
