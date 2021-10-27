@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import retrofit2.Response;
@@ -42,37 +41,41 @@ public class FetchQuotesTask {
 
     @Scheduled(cron = "0 0 18 * * 1-5", zone = "EST")
     public void fetchQuotes() throws IOException {
-        String day = dayFormat.format(new Date());
-        Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();
+        try {
+            String day = dayFormat.format(new Date());
+            Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();
 
-        List<Stock> stocks = (List<Stock>) stockRepository.findAll();
-        List<StockHistory> stockHistories = (List<StockHistory>) stockHistoryRepository.findAll();
+            List<Stock> stocks = (List<Stock>) stockRepository.findAll();
+            List<StockHistory> stockHistories = (List<StockHistory>) stockHistoryRepository.findAll();
 
-        List<Stock> updatedStocks = new ArrayList<>();
-        List<StockHistory> updatedStockHistories = new ArrayList<>();
+            List<Stock> updatedStocks = new ArrayList<>();
+            List<StockHistory> updatedStockHistories = new ArrayList<>();
 
-        assert response.body().results != null;
-        response.body().results.forEach((stockPrice) -> {
-            Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
-            Optional<StockHistory> stockHistoryOptional = stockHistories.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+            assert response.body().results != null;
+            response.body().results.forEach((stockPrice) -> {
+                Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
+                Optional<StockHistory> stockHistoryOptional = stockHistories.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
 
-            Stock stock = stockOptional.orElseGet(Stock::new);
-            StockHistory stockHistory = stockHistoryOptional.orElseGet(StockHistory::new);
+                Stock stock = stockOptional.orElseGet(Stock::new);
+                StockHistory stockHistory = stockHistoryOptional.orElseGet(StockHistory::new);
 
-            stock.symbol = stockPrice.symbol;
-            if (stock.price > 0) stock.changePercent = (stockPrice.close - stock.price) * 100 / stock.price;
-            stock.price = stockPrice.close;
-            updatedStocks.add(stock);
+                stock.symbol = stockPrice.symbol;
+                if (stock.price > 0) stock.changePercent = (stockPrice.close - stock.price) * 100 / stock.price;
+                stock.price = stockPrice.close;
+                updatedStocks.add(stock);
 
-            stockHistory.symbol = stockPrice.symbol;
-            if (stockHistory.daily_priceHistory == null) stockHistory.daily_priceHistory = new ArrayList<>();
-            stockHistory.daily_priceHistory.add(stockPrice);
-            updatedStockHistories.add(stockHistory);
-        });
+                stockHistory.symbol = stockPrice.symbol;
+                if (stockHistory.daily_priceHistory == null) stockHistory.daily_priceHistory = new ArrayList<>();
+                stockHistory.daily_priceHistory.add(stockPrice);
+                updatedStockHistories.add(stockHistory);
+            });
 
-        stockRepository.saveAll(updatedStocks);
-        stockHistoryRepository.saveAll(updatedStockHistories);
+            stockRepository.saveAll(updatedStocks);
+            stockHistoryRepository.saveAll(updatedStockHistories);
 
-        logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
+            logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
+        } catch (Exception ex) {
+            logger.error("Error while running FetchQuotesTask", ex);
+        }
     }
 }
