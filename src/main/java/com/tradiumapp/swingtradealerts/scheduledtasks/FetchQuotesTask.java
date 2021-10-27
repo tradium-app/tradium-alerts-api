@@ -1,5 +1,6 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
@@ -26,6 +27,7 @@ public class FetchQuotesTask {
     private static final Logger logger = LoggerFactory.getLogger(FetchQuotesTask.class);
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private static final SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
+    ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private PolygonService polygonService;
@@ -45,13 +47,13 @@ public class FetchQuotesTask {
             String day = dayFormat.format(new Date());
             Response<PolygonQuoteResponse> response = polygonService.getQuotes(day, apiKey).execute();
 
-            List<Stock> stocks = (List<Stock>) stockRepository.findAll();
-            List<StockHistory> stockHistories = (List<StockHistory>) stockHistoryRepository.findAll();
-
-            List<Stock> updatedStocks = new ArrayList<>();
-            List<StockHistory> updatedStockHistories = new ArrayList<>();
-
             if (response.isSuccessful() && response.body() != null && response.body().results != null) {
+                List<Stock> stocks = (List<Stock>) stockRepository.findAll();
+                List<StockHistory> stockHistories = (List<StockHistory>) stockHistoryRepository.findAll();
+
+                List<Stock> updatedStocks = new ArrayList<>();
+                List<StockHistory> updatedStockHistories = new ArrayList<>();
+
                 response.body().results.forEach((stockPrice) -> {
                     Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
                     Optional<StockHistory> stockHistoryOptional = stockHistories.stream().filter(s -> s.symbol.equals(stockPrice.symbol)).findFirst();
@@ -75,7 +77,7 @@ public class FetchQuotesTask {
 
                 logger.info("FetchQuotesTask ran at {}", timeFormat.format(new Date()));
             } else {
-                logger.error("Error response from Polygon Api for day {}. {}", day, response);
+                logger.error("Error response from Polygon Api for day {}. {}", day, mapper.writeValueAsString(response.body()));
             }
         } catch (Exception ex) {
             logger.error("Error while running FetchQuotesTask. ", ex);
