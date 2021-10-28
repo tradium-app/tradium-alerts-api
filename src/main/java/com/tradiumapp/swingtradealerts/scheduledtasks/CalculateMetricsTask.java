@@ -48,7 +48,7 @@ public class CalculateMetricsTask implements Job {
 
         for (StockHistory history : stockHistories) {
             try {
-                if (history.daily_priceHistory == null || history.daily_priceHistory.size() < 21) continue;
+                if (history.daily_priceHistory == null || history.daily_priceHistory.size() < 30) continue;
 
                 List<StockHistory.StockPrice> stockPrices = history.daily_priceHistory.stream()
                         .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
