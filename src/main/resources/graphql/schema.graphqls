@@ -54,15 +54,13 @@ type Condition {
     timeframe: String
     indicator1: String!
     operator: String
-    indicator2: String!
+    indicator2: String
+    value: String
     diff_percent: Float
 }
 
 type ValueConfig {
     length: Float
-    length2: Float
-    value: Float
-    upDirection: Boolean
 }
 
 type Alert {
@@ -92,15 +90,13 @@ input ConditionInput {
     timeframe: String
     indicator1: String!
     operator: String
-    indicator2: String!
+    indicator2: String
+    value: String
     diff_percent: Float
 }
 
 input ValueConfigInput {
     length: Float
-    length2: Float
-    value: Float
-    upDirection: Boolean
 }
 
 type Article {

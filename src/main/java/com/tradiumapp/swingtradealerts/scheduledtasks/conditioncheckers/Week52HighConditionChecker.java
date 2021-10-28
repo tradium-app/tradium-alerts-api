@@ -4,7 +4,7 @@ import com.tradiumapp.swingtradealerts.models.Condition;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 
-public class Week52HighConditionChecker implements ConditionChecker {
+public class Week52HighConditionChecker extends ConditionChecker {
     private final Stock stock;
 
     public Week52HighConditionChecker(Stock stock) {

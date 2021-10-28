@@ -54,9 +54,7 @@ class SendAlertTask_52WeekHigh_Condition_Test extends AbstractTestNGSpringContex
         testAlert.symbol = "TEST"
         testAlert.userId = testUser.id
         testAlert.status = Alert.AlertStatus.Off
-        def config = new Condition.ValueConfig()
-        config.value = 20;
-        def condition = new Condition(IndicatorType.week52high, "20_below_week52high", config)
+        def condition = new Condition(IndicatorType.week52High, Condition.Operator.below, IndicatorType.price, null, 10);
         testAlert.conditions = Arrays.asList(condition)
         alertRepository.save(testAlert);
 
