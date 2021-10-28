@@ -2,6 +2,7 @@ package com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers
 
 import com.tradiumapp.swingtradealerts.models.Condition
 import com.tradiumapp.swingtradealerts.models.IndicatorType
+import com.tradiumapp.swingtradealerts.models.Stock
 import org.ta4j.core.BarSeries
 import org.ta4j.core.BaseBarSeriesBuilder
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
@@ -14,10 +15,9 @@ class EMAConditionCheckerTest {
 
     @Test(groups = "unit")
     public void testCheckCondition() {
-        Condition.ValueConfig valueConfig = new Condition.ValueConfig();
-        valueConfig.length = 20
-        valueConfig.length2 = 50
-        Condition condition = new Condition(IndicatorType.ema, "golden_cross_ema20_ema50", valueConfig);
+        Condition.Config config = new Condition.Config();
+        config.length = 20
+        Condition condition = new Condition(IndicatorType.ema, Condition.Operator.above, IndicatorType.price, null, null);
 
         BarSeries series = new BaseBarSeriesBuilder().build();
         for (i in 0..100) {
@@ -25,8 +25,9 @@ class EMAConditionCheckerTest {
 //            series.addBar(zonedDateTime, stockPrice.open, stockPrice.high, stockPrice.low, stockPrice.close, stockPrice.volume);
         }
 
-
         PriceIndicator priceIndicator = new ClosePriceIndicator(series)
+        Stock stock = new Stock()
+        stock.price = 22;
         EMAConditionChecker checker = new EMAConditionChecker()
 
         checker.checkCondition(condition, priceIndicator)

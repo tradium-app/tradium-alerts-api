@@ -48,9 +48,9 @@ class AlertEmailSender_SimpleBuy_Test extends AbstractTestNGSpringContextTests {
         testAlert.title = "test alert"
         testAlert.symbol = "TEST1"
         testAlert.signal = Alert.AlertSignal.Buy
-        def config = new Condition.ValueConfig()
+        def config = new Condition.Config()
         config.value = 20;
-        def condition = new Condition(IndicatorType.week52high, "20_below_week52high", config)
+        def condition = new Condition(IndicatorType.week52High, "20_below_week52high", config)
         testAlert.conditions = Arrays.asList(condition)
 
         return testAlert

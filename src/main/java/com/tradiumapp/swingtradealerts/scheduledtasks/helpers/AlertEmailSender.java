@@ -35,9 +35,10 @@ public class AlertEmailSender {
             message += (i + 1) + ") " + alert.signal + " " + alert.symbol + ": " + alerts.get(i).title + " <br/> ";
 
             for (Condition condition : alerts.get(i).conditions) {
-                message += "&nbsp;&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator.toString().toUpperCase()
-                        + (condition.operator == Condition.Operator.Not ? " ≠ " : " = ")
-                        + " '" + condition.valueText + "'. <br/> ";
+                message += "&nbsp;&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator1.toString().toUpperCase()
+                        + (condition.operator != null ? (condition.operator == Condition.Operator.above ? " > " : " < ") : "")
+                        + (condition.indicator2 != null ? condition.indicator2.toString().toUpperCase() : condition.value)
+                        + " '" + condition.indicator2 + "'. <br/> ";
             }
             message += "<br/>";
         }

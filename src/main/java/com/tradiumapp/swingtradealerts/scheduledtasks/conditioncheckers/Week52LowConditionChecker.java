@@ -4,7 +4,7 @@ import com.tradiumapp.swingtradealerts.models.Condition;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 
-public class Week52LowConditionChecker implements ConditionChecker {
+public class Week52LowConditionChecker extends ConditionChecker {
     private final Stock stock;
 
     public Week52LowConditionChecker(Stock stock) {
@@ -13,7 +13,7 @@ public class Week52LowConditionChecker implements ConditionChecker {
 
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
         float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
-        float expectedMarkup = condition.valueConfig.value;
+        float expectedMarkup = condition.diff_percent;
         float currentMarkup = (lastValue - stock.week52Low) * 100 / stock.week52Low;
 
         return currentMarkup > expectedMarkup;

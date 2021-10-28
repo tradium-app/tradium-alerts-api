@@ -7,7 +7,6 @@ import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.repositories.UserRepository;
 import com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers.*;
 import com.tradiumapp.swingtradealerts.scheduledtasks.helpers.AlertEmailSender;
-import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,25 +136,23 @@ public class SendAlertTask {
     private boolean isConditionMet(Stock stock, Condition condition, BarSeries series) {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         ConditionChecker conditionChecker;
-        if (condition.indicator.equals(IndicatorType.rsi)) {
-            conditionChecker = new RSIConditionChecker();
-        } else if (condition.indicator.equals(IndicatorType.sma)) {
-            conditionChecker = new SMAConditionChecker();
-        } else if (condition.indicator.equals(IndicatorType.ema)) {
-            conditionChecker = new EMAConditionChecker();
-        } else if (condition.indicator.equals(IndicatorType.week52high)) {
+        if (condition.indicator1.equals(IndicatorType.rsi)) {
+            conditionChecker = new RSIConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.sma)) {
+            conditionChecker = new SMAConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.ema)) {
+            conditionChecker = new EMAConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.week52High)) {
             conditionChecker = new Week52HighConditionChecker(stock);
-        } else if (condition.indicator.equals(IndicatorType.week52low)) {
+        } else if (condition.indicator1.equals(IndicatorType.week52Low)) {
             conditionChecker = new Week52LowConditionChecker(stock);
-        } else if (condition.indicator.equals(IndicatorType.earnings)) {
+        } else if (condition.indicator1.equals(IndicatorType.earnings)) {
             conditionChecker = new EarningsConditionChecker(stock);
         } else {
             conditionChecker = new RedditTrendingConditionChecker(stock);
         }
 
-        boolean result = conditionChecker.checkCondition(condition, closePrice);
-
-        return (condition.operator == Condition.Operator.Not) ? !result : result;
+        return conditionChecker.checkCondition(condition, closePrice);
     }
 
     private boolean updateAlertStatus(Alert alert, Alert.AlertStatus status) {
