@@ -1,14 +1,20 @@
 package com.tradiumapp.swingtradealerts.jobscheduler.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import java.util.Properties;
 
 @Configuration
 public class QuartzConfiguration {
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @Value("${spring.data.mongodb.uri}")
     private String mongoUri;
@@ -23,7 +29,7 @@ public class QuartzConfiguration {
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
-        scheduler.setApplicationContextSchedulerContextKey("applicationContext");
+        scheduler.setJobFactory(jobFactory());
 
         Properties properties = new Properties();
         properties.setProperty("org.quartz.jobStore.class", "com.novemberain.quartz.mongodb.MongoDBJobStore");
@@ -39,4 +45,10 @@ public class QuartzConfiguration {
         return scheduler;
     }
 
+    @Bean
+    public SpringBeanJobFactory jobFactory() {
+        ContextAwareSpringBeanJobFactory jobFactory = new ContextAwareSpringBeanJobFactory();
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
+    }
 }

@@ -21,18 +21,17 @@ public class SchedulerService implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
     }
 
-    public void scheduleJob(Class<? extends Job> jobClass, String jobName, String jobGroup, String description, String cronExpression)
+    public void scheduleJob(Class<? extends Job> jobClass, String jobName, String cronExpression)
             throws SchedulerException {
 
         JobDetail jobDetail = JobBuilder.newJob(jobClass)
-                .withIdentity(jobName, jobGroup)
-                .withDescription(description)
+                .withIdentity(jobName, jobName)
                 .storeDurably()
                 .build();
         Trigger trigger = TriggerBuilder.newTrigger().startNow().withSchedule(cronSchedule(cronExpression)).build();
 
         Scheduler scheduler = schedulerFactory.getScheduler();
-        JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
+        JobKey jobKey = JobKey.jobKey(jobName, jobName);
 
         if (!scheduler.checkExists(jobKey)) {
             scheduler.scheduleJob(jobDetail, trigger);

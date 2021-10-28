@@ -23,6 +23,6 @@ public class JobScheduler {
     public void scheuduleAllJobs() throws SchedulerException {
         String day = dayFormat.format(new Date());
 
-        schedulerService.scheduleJob(CalculateMetricsTask.class, "CalculateMetricsTask", "CalculateMetricsTask", "CalculateMetricsTask" + day, "0 0 */4 ? * *");
+        schedulerService.scheduleJob(CalculateMetricsTask.class, "CalculateMetricsTask", "0 * * ? * *");
     }
 }
