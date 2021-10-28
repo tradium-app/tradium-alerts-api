@@ -27,20 +27,20 @@ public class SchedulerService implements InitializingBean {
         JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobName)
                 .storeDurably()
+                .requestRecovery()
                 .build();
-        Trigger trigger = TriggerBuilder.newTrigger().startNow().withSchedule(cronSchedule(cronExpression)).build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .startNow()
+                .withSchedule(cronSchedule(cronExpression)
+                .withMisfireHandlingInstructionFireAndProceed())
+                .build();
 
         Scheduler scheduler = schedulerFactory.getScheduler();
-        JobKey jobKey = JobKey.jobKey(jobName, jobName);
+        JobKey jobKey = JobKey.jobKey(jobName);
 
         if (!scheduler.checkExists(jobKey)) {
             scheduler.scheduleJob(jobDetail, trigger);
         }
     }
-
-    public void deleteJob(String jobName, String jobGroup) throws SchedulerException {
-        Scheduler scheduler = schedulerFactory.getScheduler();
-        scheduler.deleteJob(JobKey.jobKey(jobName, jobGroup));
-    }
-
 }

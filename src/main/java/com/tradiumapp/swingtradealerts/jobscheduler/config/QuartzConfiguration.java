@@ -35,10 +35,11 @@ public class QuartzConfiguration {
         properties.setProperty("org.quartz.jobStore.class", "com.novemberain.quartz.mongodb.MongoDBJobStore");
         properties.setProperty("org.quartz.jobStore.mongoUri", mongoUri);
         properties.setProperty("org.quartz.jobStore.collectionPrefix", "quartz_");
-        properties.setProperty("org.quartz.threadPool.threadCount", "1");
+        properties.setProperty("org.quartz.threadPool.threadCount", "2");
         properties.setProperty("org.quartz.jobStore.isClustered", "true");
         properties.setProperty("org.quartz.scheduler.instanceId", "AUTO");
         properties.setProperty("org.quartz.scheduler.instanceName", "quartzMongoInstance");
+        properties.setProperty("org.quartz.jobStore.misfireThreshold", "1800000");
 
         scheduler.setQuartzProperties(properties);
         scheduler.setWaitForJobsToCompleteOnShutdown(true);
