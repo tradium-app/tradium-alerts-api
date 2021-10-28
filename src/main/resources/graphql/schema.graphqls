@@ -56,7 +56,9 @@ type Condition {
     operator: String
     indicator2: String
     value: String
+    valueText: String
     diff_percent: Float
+    config: ValueConfig
 }
 
 type ValueConfig {
@@ -92,7 +94,9 @@ input ConditionInput {
     operator: String
     indicator2: String
     value: String
+    valueText: String
     diff_percent: Float
+    config: ValueConfigInput
 }
 
 input ValueConfigInput {

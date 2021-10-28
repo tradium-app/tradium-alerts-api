@@ -7,12 +7,14 @@ public class Condition {
     public Operator operator;
     public IndicatorType indicator2;
     public String value;
+    public String valueText;
     public float diff_percent;
     public Config config;
 
-    public Condition(){}
+    public Condition() {
+    }
 
-    public Condition(IndicatorType indicator1, Operator operator, IndicatorType indicator2, String value, float diff_percent){
+    public Condition(IndicatorType indicator1, Operator operator, IndicatorType indicator2, String value, float diff_percent) {
         this.indicator1 = indicator1;
         this.operator = operator;
         this.value = value;
@@ -25,6 +27,6 @@ public class Condition {
     }
 
     public enum Operator {
-        above,below
+        above, below
     }
 }
