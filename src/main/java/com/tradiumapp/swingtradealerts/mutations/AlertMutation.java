@@ -79,10 +79,8 @@ public class AlertMutation implements GraphQLMutationResolver {
 
     private boolean areConditionsSame(List<Condition> conditions1, List<Condition> conditions2) {
         for (Condition condition1 : conditions1) {
-            if (!conditions2.stream().anyMatch(c -> c.indicator1 == condition1.indicator1
-                    && c.indicator2 == condition1.indicator2
-                    && c.operator == condition1.operator
-                    && c.diff_percent == condition1.diff_percent)) {
+            if (!conditions2.stream().anyMatch(c -> c.indicator == condition1.indicator
+                    && c.value.equals(condition1.value))) {
                 return false;
             }
         }

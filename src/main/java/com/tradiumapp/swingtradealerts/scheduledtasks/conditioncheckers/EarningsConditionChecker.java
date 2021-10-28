@@ -16,6 +16,6 @@ public class EarningsConditionChecker implements ConditionChecker {
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
         int daysLeft = Days.daysBetween(new DateTime(), new DateTime(stock.nextEarningsDate)).getDays();
 
-        return daysLeft > 0 && daysLeft < condition.indicator2;
+        return daysLeft > 0 && daysLeft < condition.valueConfig.value;
     }
 }

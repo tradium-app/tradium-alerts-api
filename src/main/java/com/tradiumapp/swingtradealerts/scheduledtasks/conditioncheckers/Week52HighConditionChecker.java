@@ -13,7 +13,7 @@ public class Week52HighConditionChecker implements ConditionChecker {
 
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
         float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
-        float expectedDrawDown = condition.diff_percent;
+        float expectedDrawDown = condition.valueConfig.value;
         float currentDrawDown = (stock.week52High - lastValue) * 100 / stock.week52High;
 
         return currentDrawDown > expectedDrawDown;

@@ -51,11 +51,12 @@ type Stock {
 
 type Condition {
     order: Float!
-    timeframe: String
-    indicator1: String!
     operator: String
-    indicator2: String!
-    diff_percent: Float
+    indicator: String!
+    timeframe: String!
+    value: String
+    valueText: String
+    valueConfig: ValueConfig
 }
 
 type ValueConfig {
@@ -88,12 +89,13 @@ input AlertInput {
 }
 
 input ConditionInput {
-    order: Float!
-    timeframe: String
-    indicator1: String!
+    order: Float
     operator: String
-    indicator2: String!
-    diff_percent: Float
+    indicator: String!
+    timeframe: String!
+    value: String
+    valueText: String
+    valueConfig: ValueConfigInput
 }
 
 input ValueConfigInput {
