@@ -1,14 +1,16 @@
 package com.tradiumapp.swingtradealerts.scheduledtasks;
 
+import com.tradiumapp.swingtradealerts.jobscheduler.QuartzJob;
 import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.indicators.EMAIndicator;
@@ -16,7 +18,6 @@ import org.ta4j.core.indicators.RSIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -26,8 +27,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class CalculateMetricsTask {
+@QuartzJob
+public class CalculateMetricsTask implements Job {
     private static final Logger logger = LoggerFactory.getLogger(FetchAllStocksTask.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -37,8 +38,8 @@ public class CalculateMetricsTask {
     @Autowired
     private StockHistoryRepository stockHistoryRepository;
 
-    @Scheduled(cron = "0 0 */4 * * *", zone = "EST")
-    public void calculateMetrics() throws IOException {
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         long startEpoch = Instant.now().minusSeconds(2_592_000).toEpochMilli();
         List<Stock> updatedStocks = new ArrayList<>();
 

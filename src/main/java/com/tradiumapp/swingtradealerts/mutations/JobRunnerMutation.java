@@ -3,6 +3,7 @@ package com.tradiumapp.swingtradealerts.mutations;
 import com.tradiumapp.swingtradealerts.models.Response;
 import com.tradiumapp.swingtradealerts.scheduledtasks.*;
 import graphql.kickstart.tools.GraphQLMutationResolver;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,11 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     @Autowired
     private FetchEarningsTask fetchEarningsTask;
 
-    public Response runJob(final float jobId) throws IOException {
+    public Response runJob(final float jobId) throws IOException, JobExecutionException {
         if(jobId == 1001) fetchAllStocksTask.fetchAllStocks();
         else if(jobId == 1002) fetchQuotesTask.fetchQuotes();
         else if(jobId == 1003) sendAlertTask.sendAlerts();
-        else if(jobId == 1004) calculateMetricsTask.calculateMetrics();
+        else if(jobId == 1004) calculateMetricsTask.execute(null);
         else if(jobId == 1005) saNewsParserTask.fetchSaTopNews();
         else if(jobId == 1006) tipranksMetricsTask.getData();
         else if(jobId == 1007) fetchEarningsTask.fetchUpcomingEarnings();
