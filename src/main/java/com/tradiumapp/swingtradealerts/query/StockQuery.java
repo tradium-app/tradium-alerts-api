@@ -45,8 +45,8 @@ public class StockQuery implements GraphQLQueryResolver {
         String userId = PrincipalManager.getCurrentUserId();
 
         if (stock != null && userId != null) {
-            stock.priceToSalesTTM = stock.price / stock.salesPerShareTTM;
-            stock.priceToEarningsTTM = stock.price / stock.earningsPerShareTTM;
+            if (stock.salesPerShareTTM != 0) stock.priceToSalesTTM = stock.price / stock.salesPerShareTTM;
+            if (stock.earningsPerShareTTM != 0) stock.priceToEarningsTTM = stock.price / stock.earningsPerShareTTM;
 
             Query query1 = new Query();
             query1.addCriteria(Criteria.where("userId").is(userId));
