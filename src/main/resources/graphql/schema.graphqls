@@ -38,6 +38,7 @@ type Stock {
     priceToSalesTTM: Float
     priceToEarningsTTM: Float
     nextEarningsDate: UtcDate
+    grossMargin: Float
     rsi: Float
     trend: String
     redditRank: Float

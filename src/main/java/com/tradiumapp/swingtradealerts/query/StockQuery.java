@@ -45,12 +45,14 @@ public class StockQuery implements GraphQLQueryResolver {
         String userId = PrincipalManager.getCurrentUserId();
 
         if (stock != null && userId != null) {
+            stock.priceToSalesTTM = stock.price / stock.salesPerShareTTM;
+            stock.priceToEarningsTTM = stock.price / stock.earningsPerShareTTM;
+
             Query query1 = new Query();
             query1.addCriteria(Criteria.where("userId").is(userId));
             query1.addCriteria(Criteria.where("symbol").is(symbol));
 
-            List<Alert> alerts = mongoTemplate.find(query1, Alert.class);
-            stock.alerts = alerts;
+            stock.alerts = mongoTemplate.find(query1, Alert.class);
 
             Query query2 = new Query();
             query2.addCriteria(Criteria.where("userId").is(userId));
