@@ -40,7 +40,7 @@ public class AlertEmailSender {
                         : (condition.operator == Condition.Operator.above ? "  ≯  " : "  ≮  ");
 
                 message += "&nbsp;&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + StringUtils.capitalize(condition.indicator1.toString())
-                        + (condition.operator != null ? operatorSymbol : "")
+                        + (condition.operator != null ? operatorSymbol : "   ")
                         + (condition.indicator2 != null ? StringUtils.capitalize(condition.indicator2.toString())
                         : (condition.valueText != null ? condition.valueText : condition.value))
                         + (condition.diff_percent > 0 ? " (+" + condition.diff_percent + "%)" : "")

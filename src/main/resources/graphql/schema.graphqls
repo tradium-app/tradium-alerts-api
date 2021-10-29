@@ -54,13 +54,13 @@ type Condition {
     timeframe: String
     isNegative: Boolean
     indicator1: String!
+    config1: ValueConfig
     operator: String
     indicator2: String
+    config2: ValueConfig
     value: String
     valueText: String
     diff_percent: Float
-    config1: ValueConfig
-    config2: ValueConfig
 }
 
 type ValueConfig {
@@ -94,13 +94,13 @@ input ConditionInput {
     timeframe: String
     isNegative: Boolean
     indicator1: String!
+    config1: ValueConfigInput
     operator: String
     indicator2: String
+    config2: ValueConfigInput
     value: String
     valueText: String
     diff_percent: Float
-    config1: ValueConfigInput
-    config2: ValueConfigInput
 }
 
 input ValueConfigInput {
