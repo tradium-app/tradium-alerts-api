@@ -35,10 +35,11 @@ public class AlertEmailSender {
             message += (i + 1) + ") " + alert.signal + " " + alert.symbol + ": " + alerts.get(i).title + " <br/> ";
 
             for (Condition condition : alerts.get(i).conditions) {
-                message += "&nbsp;&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + condition.indicator1.toString().toUpperCase()
+                message += "&nbsp;&nbsp;&nbsp;" + StringUtils.capitalize(condition.timeframe) + " " + StringUtils.capitalize(condition.indicator1.toString())
                         + (condition.operator != null ? (condition.operator == Condition.Operator.above ? " > " : " < ") : "")
-                        + (condition.indicator2 != null ? condition.indicator2.toString().toUpperCase() : condition.value)
-                        + " '" + condition.indicator2 + "'. <br/> ";
+                        + (condition.indicator2 != null ? StringUtils.capitalize(condition.indicator2.toString())
+                        : (condition.valueText != null ? condition.valueText : condition.value))
+                        + (condition.diff_percent > 0 ? " (+" + condition.diff_percent + "%). <br/> " : "");
             }
             message += "<br/>";
         }
