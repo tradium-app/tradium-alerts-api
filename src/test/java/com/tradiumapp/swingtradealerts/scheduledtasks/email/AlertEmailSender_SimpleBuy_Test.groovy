@@ -1,4 +1,4 @@
-package com.tradiumapp.swingtradealerts.scheduledtasks.helpers
+package com.tradiumapp.swingtradealerts.scheduledtasks.email
 
 import com.tradiumapp.swingtradealerts.models.Alert
 import com.tradiumapp.swingtradealerts.models.Condition
@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.any
 import static org.mockito.Mockito.verify
 
 @DataMongoTest
-class AlertEmailSender_MultipleAlerts_Test extends AbstractTestNGSpringContextTests {
+class AlertEmailSender_SimpleBuy_Test extends AbstractTestNGSpringContextTests {
     @Mock
     SendGridEmailSender sendGridEmailSender;
 
@@ -33,18 +33,14 @@ class AlertEmailSender_MultipleAlerts_Test extends AbstractTestNGSpringContextTe
     }
 
     @Test(groups = "unit")
-    public void testSendBuySellAlertEmail() {
+    public void testSendBuyAlertEmail() {
         User user = new User()
-        List<Alert> alerts = new ArrayList<>(Arrays.asList(createATestAlert()))
-        Alert sellAlert = createATestAlert()
-        sellAlert.signal = Alert.AlertSignal.Sell
-        sellAlert.symbol = "TEST2"
-        alerts.add(sellAlert)
+        List<Alert> alerts = Arrays.asList(createATestAlert())
 
         alertEmailSender.sendEmail(user, alerts)
 
         verify(sendGridEmailSender).sendEmail(any(), subjectCaptor.capture(), any())
-        Assert.assertEquals(subjectCaptor.getValue(), "Buy TEST1.. Sell TEST2..")
+        Assert.assertEquals(subjectCaptor.getValue().trim(), "Buy TEST1..")
     }
 
     private Alert createATestAlert() {

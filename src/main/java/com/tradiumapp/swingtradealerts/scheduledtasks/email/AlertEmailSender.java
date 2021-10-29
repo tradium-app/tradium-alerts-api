@@ -1,4 +1,4 @@
-package com.tradiumapp.swingtradealerts.scheduledtasks.helpers;
+package com.tradiumapp.swingtradealerts.scheduledtasks.email;
 
 import com.tradiumapp.swingtradealerts.models.Alert;
 import com.tradiumapp.swingtradealerts.models.Condition;
@@ -39,7 +39,8 @@ public class AlertEmailSender {
                         + (condition.operator != null ? (condition.operator == Condition.Operator.above ? " > " : " < ") : "")
                         + (condition.indicator2 != null ? StringUtils.capitalize(condition.indicator2.toString())
                         : (condition.valueText != null ? condition.valueText : condition.value))
-                        + (condition.diff_percent > 0 ? " (+" + condition.diff_percent + "%). <br/> " : "");
+                        + (condition.diff_percent > 0 ? " (+" + condition.diff_percent + "%)" : "")
+                        + "<br/>";
             }
             message += "<br/>";
         }

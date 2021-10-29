@@ -19,20 +19,6 @@ public class RSIConditionChecker extends ConditionChecker {
         RSIIndicator rsiIndicator = new RSIIndicator(priceIndicator, condition.config1.length);
         float rsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
-        if (condition.indicator2.equals(IndicatorType.price)) {
-            float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
-            return checkAboveOrBelow(condition.operator, rsiValue, lastValue, condition.diff_percent);
-        } else if (condition.indicator2.equals(IndicatorType.sma)) {
-            SMAIndicator smaIndicator = new SMAIndicator(priceIndicator, condition.config2.length);
-            float smaValue = smaIndicator.getValue(smaIndicator.getBarSeries().getBarCount() - 1).floatValue();
-
-            return checkAboveOrBelow(condition.operator, rsiValue, smaValue, condition.diff_percent);
-        } else if (condition.indicator2.equals(IndicatorType.week52High)) {
-            return checkAboveOrBelow(condition.operator, rsiValue, stock.week52High, condition.diff_percent);
-        } else if (condition.indicator2.equals(IndicatorType.week52Low)) {
-            return checkAboveOrBelow(condition.operator, rsiValue, stock.week52Low, condition.diff_percent);
-        } else {
-            return false;
-        }
+        return checkAboveOrBelow(condition.operator, rsiValue, Float.parseFloat(condition.value), condition.diff_percent);
     }
 }

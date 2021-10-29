@@ -5,7 +5,7 @@ import com.tradiumapp.swingtradealerts.repositories.AlertRepository
 import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository
 import com.tradiumapp.swingtradealerts.repositories.StockRepository
 import com.tradiumapp.swingtradealerts.repositories.UserRepository
-import com.tradiumapp.swingtradealerts.scheduledtasks.helpers.AlertEmailSender
+import com.tradiumapp.swingtradealerts.scheduledtasks.email.AlertEmailSender
 import org.mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest

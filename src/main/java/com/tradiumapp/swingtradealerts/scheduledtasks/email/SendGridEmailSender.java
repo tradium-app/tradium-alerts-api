@@ -1,4 +1,4 @@
-package com.tradiumapp.swingtradealerts.scheduledtasks.helpers;
+package com.tradiumapp.swingtradealerts.scheduledtasks.email;
 
 import com.sendgrid.Method;
 import com.sendgrid.Request;

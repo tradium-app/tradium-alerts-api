@@ -52,6 +52,7 @@ type Stock {
 type Condition {
     order: Float!
     timeframe: String
+    isNot: Boolean
     indicator1: String!
     operator: String
     indicator2: String
@@ -91,6 +92,7 @@ input AlertInput {
 input ConditionInput {
     order: Float!
     timeframe: String
+    isNot: Boolean
     indicator1: String!
     operator: String
     indicator2: String
