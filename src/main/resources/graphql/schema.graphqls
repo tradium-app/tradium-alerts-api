@@ -58,7 +58,8 @@ type Condition {
     value: String
     valueText: String
     diff_percent: Float
-    config: ValueConfig
+    config1: ValueConfig
+    config2: ValueConfig
 }
 
 type ValueConfig {
@@ -96,7 +97,8 @@ input ConditionInput {
     value: String
     valueText: String
     diff_percent: Float
-    config: ValueConfigInput
+    config1: ValueConfigInput
+    config2: ValueConfigInput
 }
 
 input ValueConfigInput {

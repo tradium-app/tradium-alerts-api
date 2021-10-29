@@ -136,7 +136,9 @@ public class SendAlertTask {
     private boolean isConditionMet(Stock stock, Condition condition, BarSeries series) {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         ConditionChecker conditionChecker;
-        if (condition.indicator1.equals(IndicatorType.rsi)) {
+        if (condition.indicator1.equals(IndicatorType.price)) {
+            conditionChecker = new PriceConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.rsi)) {
             conditionChecker = new RSIConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.sma)) {
             conditionChecker = new SMAConditionChecker(stock);
@@ -146,7 +148,7 @@ public class SendAlertTask {
             conditionChecker = new Week52HighConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.week52Low)) {
             conditionChecker = new Week52LowConditionChecker(stock);
-        } else if (condition.indicator1.equals(IndicatorType.earnings)) {
+        } else if (condition.indicator1.equals(IndicatorType.earningsDate)) {
             conditionChecker = new EarningsConditionChecker(stock);
         } else {
             conditionChecker = new RedditTrendingConditionChecker(stock);

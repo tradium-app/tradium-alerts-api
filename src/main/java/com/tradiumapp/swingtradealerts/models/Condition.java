@@ -9,7 +9,8 @@ public class Condition {
     public String value;
     public String valueText;
     public float diff_percent;
-    public Config config;
+    public Config config1;
+    public Config config2;
 
     public Condition() {
     }

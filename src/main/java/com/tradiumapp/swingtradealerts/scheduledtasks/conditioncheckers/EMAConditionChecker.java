@@ -15,14 +15,14 @@ public class EMAConditionChecker extends ConditionChecker {
     }
 
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
-        EMAIndicator emaIndicator = new EMAIndicator(priceIndicator, condition.config.length);
+        EMAIndicator emaIndicator = new EMAIndicator(priceIndicator, condition.config1.length);
         float emaValue = emaIndicator.getValue(emaIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
         if (condition.indicator2.equals(IndicatorType.price)) {
             float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
             return checkAboveOrBelow(condition.operator, emaValue, lastValue, condition.diff_percent);
         } else if (condition.indicator2.equals(IndicatorType.sma)) {
-            SMAIndicator smaIndicator = new SMAIndicator(priceIndicator, condition.config.length);
+            SMAIndicator smaIndicator = new SMAIndicator(priceIndicator, condition.config2.length);
             float smaValue = smaIndicator.getValue(smaIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
             return checkAboveOrBelow(condition.operator, emaValue, smaValue, condition.diff_percent);

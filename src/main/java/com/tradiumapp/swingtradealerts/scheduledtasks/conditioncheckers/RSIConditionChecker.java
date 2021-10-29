@@ -16,14 +16,14 @@ public class RSIConditionChecker extends ConditionChecker {
     }
 
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
-        RSIIndicator rsiIndicator = new RSIIndicator(priceIndicator, condition.config.length);
+        RSIIndicator rsiIndicator = new RSIIndicator(priceIndicator, condition.config1.length);
         float rsiValue = rsiIndicator.getValue(rsiIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
         if (condition.indicator2.equals(IndicatorType.price)) {
             float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
             return checkAboveOrBelow(condition.operator, rsiValue, lastValue, condition.diff_percent);
         } else if (condition.indicator2.equals(IndicatorType.sma)) {
-            SMAIndicator smaIndicator = new SMAIndicator(priceIndicator, condition.config.length);
+            SMAIndicator smaIndicator = new SMAIndicator(priceIndicator, condition.config2.length);
             float smaValue = smaIndicator.getValue(smaIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
             return checkAboveOrBelow(condition.operator, rsiValue, smaValue, condition.diff_percent);
