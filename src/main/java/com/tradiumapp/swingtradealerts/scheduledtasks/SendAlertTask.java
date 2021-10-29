@@ -154,7 +154,9 @@ public class SendAlertTask {
             conditionChecker = new RedditTrendingConditionChecker(stock);
         }
 
-        return conditionChecker.checkCondition(condition, closePrice);
+        boolean result = conditionChecker.checkCondition(condition, closePrice);
+
+        return (condition.isNegative) ? !result : result;
     }
 
     private boolean updateAlertStatus(Alert alert, Alert.AlertStatus status) {

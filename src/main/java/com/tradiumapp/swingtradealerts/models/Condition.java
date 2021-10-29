@@ -3,7 +3,7 @@ package com.tradiumapp.swingtradealerts.models;
 public class Condition {
     public int order;
     public String timeframe;
-    public boolean isNot;
+    public boolean isNegative;
     public IndicatorType indicator1;
     public Operator operator;
     public IndicatorType indicator2;
