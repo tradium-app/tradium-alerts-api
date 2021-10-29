@@ -2,7 +2,6 @@ package com.tradiumapp.swingtradealerts.scheduledtasks.conditioncheckers;
 
 import com.tradiumapp.swingtradealerts.models.Condition;
 import com.tradiumapp.swingtradealerts.models.Stock;
-import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 
 public class RedditTrendingConditionChecker extends ConditionChecker {
@@ -13,7 +12,9 @@ public class RedditTrendingConditionChecker extends ConditionChecker {
     }
 
     public boolean checkCondition(Condition condition, PriceIndicator priceIndicator) {
-        switch (condition.value){
+        if (stock.redditRank == 0) return false;
+
+        switch (condition.value) {
             case "top10":
                 return stock.redditRank < 10;
             case "top20":
