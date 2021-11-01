@@ -20,16 +20,16 @@ public class EMAConditionChecker extends ConditionChecker {
 
         if (condition.indicator2.equals(IndicatorType.price)) {
             float lastValue = priceIndicator.getValue(priceIndicator.getBarSeries().getBarCount() - 1).floatValue();
-            return checkAboveOrBelow(condition.operator, emaValue, lastValue, condition.diff_percent);
+            return compareNumbers(condition.operator, emaValue, lastValue, condition.diff_percent);
         } else if (condition.indicator2.equals(IndicatorType.sma)) {
             SMAIndicator smaIndicator = new SMAIndicator(priceIndicator, condition.config2.length);
             float smaValue = smaIndicator.getValue(smaIndicator.getBarSeries().getBarCount() - 1).floatValue();
 
-            return checkAboveOrBelow(condition.operator, emaValue, smaValue, condition.diff_percent);
+            return compareNumbers(condition.operator, emaValue, smaValue, condition.diff_percent);
         } else if (condition.indicator2.equals(IndicatorType.week52High)) {
-            return checkAboveOrBelow(condition.operator, emaValue, stock.week52High, condition.diff_percent);
+            return compareNumbers(condition.operator, emaValue, stock.week52High, condition.diff_percent);
         } else if (condition.indicator2.equals(IndicatorType.week52Low)) {
-            return checkAboveOrBelow(condition.operator, emaValue, stock.week52Low, condition.diff_percent);
+            return compareNumbers(condition.operator, emaValue, stock.week52Low, condition.diff_percent);
         } else {
             return false;
         }
