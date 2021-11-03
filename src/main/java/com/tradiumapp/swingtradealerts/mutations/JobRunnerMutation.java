@@ -19,7 +19,7 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     private FetchAllStocksTask fetchAllStocksTask;
 
     @Autowired
-    private FetchQuotesTask fetchQuotesTask;
+    private FetchDailyQuotesTask fetchDailyQuotesTask;
 
     @Autowired
     private SendAlertTask sendAlertTask;
@@ -31,7 +31,7 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     private FetchStockMetricsTask fetchStockMetricsTask;
 
     @Autowired
-    private SaNewsParserTask saNewsParserTask;
+    private FetchArticlesTask fetchArticlesTask;
 
     @Autowired
     private TipranksMetricsTask tipranksMetricsTask;
@@ -39,15 +39,20 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     @Autowired
     private FetchEarningsTask fetchEarningsTask;
 
+    @Autowired
+    private FetchLiveQuotesTask fetchLiveQuotesTask;
+
     public Response runJob(final float jobId) throws IOException, JobExecutionException {
         if(jobId == 1001) fetchAllStocksTask.fetchAllStocks();
-        else if(jobId == 1002) fetchQuotesTask.fetchQuotes();
+        else if(jobId == 1002) fetchDailyQuotesTask.fetchQuotes();
         else if(jobId == 1003) sendAlertTask.sendAlerts();
         else if(jobId == 1004) calculateMetricsTask.execute(null);
-        else if(jobId == 1005) saNewsParserTask.fetchSaTopNews();
+        else if(jobId == 1005) fetchArticlesTask.fetchArticles();
         else if(jobId == 1006) tipranksMetricsTask.getData();
         else if(jobId == 1007) fetchEarningsTask.fetchUpcomingEarnings();
         else if(jobId == 1008) fetchStockMetricsTask.fetchStockMetrics();
+        else if(jobId == 1009) fetchLiveQuotesTask.fetchLiveQuotesTask();
+
 
         logger.info("Job {} ran successfully.", jobId);
 

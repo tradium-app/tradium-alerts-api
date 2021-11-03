@@ -23,6 +23,8 @@ public class Article {
     @Indexed(unique = true)
     public String link;
 
+    public String summary;
+
     @CreatedDate
     @Indexed(name = "createdDate", expireAfterSeconds = 2_592_000)
     public Date createdDate;

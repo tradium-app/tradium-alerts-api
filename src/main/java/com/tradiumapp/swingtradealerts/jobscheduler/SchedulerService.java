@@ -10,7 +10,7 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 
 @Service
 public class SchedulerService implements InitializingBean {
-    private SchedulerFactoryBean schedulerFactory;
+    private final SchedulerFactoryBean schedulerFactory;
 
     @Autowired
     public SchedulerService(SchedulerFactoryBean schedulerFactory) {

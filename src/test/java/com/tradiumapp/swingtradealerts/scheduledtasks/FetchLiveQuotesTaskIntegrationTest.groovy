@@ -6,12 +6,13 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
 import org.testng.annotations.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SaNewsParserTaskTest extends AbstractTestNGSpringContextTests {
+public class FetchLiveQuotesTaskIntegrationTest extends AbstractTestNGSpringContextTests {
+
     @Autowired
-    private SaNewsParserTask task
+    private FetchLiveQuotesTask task;
 
     @Test(groups = "integration")
-    void fetchSaTopNews() {
-        task.fetchSaTopNews()
+    void testFetchAllStocks() {
+        task.fetchLiveQuotesTask()
     }
 }

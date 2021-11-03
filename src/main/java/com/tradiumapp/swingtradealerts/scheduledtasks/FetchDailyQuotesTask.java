@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class FetchQuotesTask {
-    private static final Logger logger = LoggerFactory.getLogger(FetchQuotesTask.class);
+public class FetchDailyQuotesTask {
+    private static final Logger logger = LoggerFactory.getLogger(FetchDailyQuotesTask.class);
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private static final SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
     ObjectMapper mapper = new ObjectMapper();

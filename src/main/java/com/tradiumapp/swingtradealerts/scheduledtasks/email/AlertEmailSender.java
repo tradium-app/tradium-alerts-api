@@ -43,7 +43,8 @@ public class AlertEmailSender {
                         + (condition.operator != null ? operatorSymbol : "  ")
                         + (condition.indicator2 != null ? StringUtils.capitalize(condition.indicator2.toString())
                         : (condition.valueText != null ? condition.valueText : condition.value))
-                        + (condition.diff_percent != 0 ? (condition.diff_percent > 0 ? " by more than " : " by less than ") + Math.abs(condition.diff_percent) + "% " : "")
+                        + (condition.diff_percent != 0 ? (condition.diff_percent > 0 ? " by more than " : " by less than ")
+                        + Math.floor(Math.abs(condition.diff_percent)) + "% " : "")
                         + "<br/>";
             }
             message += "<br/>";
