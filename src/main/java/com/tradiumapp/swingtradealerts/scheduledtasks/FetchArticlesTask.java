@@ -40,7 +40,7 @@ public class FetchArticlesTask {
     @Autowired
     private StockUtility stockUtility;
 
-    @Scheduled(cron = "0 0 */4 * * *", zone = "EST")
+    @Scheduled(cron = "0 0 7-21/8 * * *", zone = "EST")
     public void fetchArticles() throws IOException {
         try {
             String day = dayFormat.format(new Date());
