@@ -71,6 +71,7 @@ type ValueConfig {
 type Alert {
     id: String!
     symbol: String!
+    price: Float
     signal: String
     title: String
     status: String

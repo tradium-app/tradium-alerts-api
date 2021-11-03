@@ -14,9 +14,9 @@ public class Alert {
 
     public String userId;
     public String symbol;
+    public float price;
     public AlertSignal signal;
     public String title;
-
     public AlertStatus status;
     public Date alertOnDate;
     public boolean enabled = true;
