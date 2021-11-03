@@ -24,6 +24,7 @@ public class Stock {
     public String industry;
 
     public float price;
+    public float yesterdaysPrice;
     public float changePercent;
 
     public boolean shouldRefresh;

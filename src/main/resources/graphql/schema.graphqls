@@ -24,6 +24,7 @@ type Stock {
     symbol: String!
     company: String
     price: Float
+    yesterdaysPrice: Float
     recentClosePrices: [Float]
     nextPredictions: [Float]
     changePercent: Float
