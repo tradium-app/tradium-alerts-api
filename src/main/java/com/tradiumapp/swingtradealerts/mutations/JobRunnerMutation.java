@@ -42,20 +42,23 @@ public class JobRunnerMutation implements GraphQLMutationResolver {
     @Autowired
     private FetchLiveQuotesTask fetchLiveQuotesTask;
 
-    public Response runJob(final float jobId) throws IOException, JobExecutionException {
-        if(jobId == 1001) fetchAllStocksTask.fetchAllStocks();
-        else if(jobId == 1002) fetchDailyQuotesTask.fetchQuotes();
-        else if(jobId == 1003) sendAlertTask.sendAlerts();
-        else if(jobId == 1004) calculateMetricsTask.execute(null);
-        else if(jobId == 1005) fetchArticlesTask.fetchArticles();
-        else if(jobId == 1006) tipranksMetricsTask.getData();
-        else if(jobId == 1007) fetchEarningsTask.fetchUpcomingEarnings();
-        else if(jobId == 1008) fetchStockMetricsTask.fetchStockMetrics();
-        else if(jobId == 1009) fetchLiveQuotesTask.fetchLiveQuotesTask();
+    @Autowired
+    private UpdateYesterdaysPriceTask updateYesterdaysPriceTask;
 
+    public Response runJob(final float jobId) throws IOException, JobExecutionException {
+        if (jobId == 1001) fetchAllStocksTask.fetchAllStocks();
+        else if (jobId == 1002) fetchDailyQuotesTask.fetchQuotes();
+        else if (jobId == 1003) sendAlertTask.sendAlerts();
+        else if (jobId == 1004) calculateMetricsTask.execute(null);
+        else if (jobId == 1005) fetchArticlesTask.fetchArticles();
+        else if (jobId == 1006) tipranksMetricsTask.getData();
+        else if (jobId == 1007) fetchEarningsTask.fetchUpcomingEarnings();
+        else if (jobId == 1008) fetchStockMetricsTask.fetchStockMetrics();
+        else if (jobId == 1009) fetchLiveQuotesTask.fetchLiveQuotesTask();
+        else if (jobId == 1010) updateYesterdaysPriceTask.execute(null);
 
         logger.info("Job {} ran successfully.", jobId);
 
-        return new Response(true, String.format("Job %s ran successfully.",jobId));
+        return new Response(true, String.format("Job %s ran successfully.", jobId));
     }
 }

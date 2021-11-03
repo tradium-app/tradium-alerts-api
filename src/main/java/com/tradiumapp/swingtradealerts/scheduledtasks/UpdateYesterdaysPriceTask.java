@@ -5,6 +5,7 @@ import com.tradiumapp.swingtradealerts.models.Stock;
 import com.tradiumapp.swingtradealerts.models.StockHistory;
 import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
+import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +32,9 @@ public class UpdateYesterdaysPriceTask implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        long yesterdayStartEpoch = Instant.now().minusSeconds(86400).toEpochMilli();
+        long yesterdayEndEpoch = new DateTime().withTimeAtStartOfDay().getMillis();
+        long yesterdayStartEpoch = yesterdayEndEpoch - 86_400_000;
+
         List<Stock> updatedStocks = new ArrayList<>();
 
         Iterable<StockHistory> stockHistories = stockHistoryRepository.findAll();
@@ -43,8 +45,12 @@ public class UpdateYesterdaysPriceTask implements Job {
                 if (history.daily_priceHistory == null || history.daily_priceHistory.size() < 30) continue;
                 Optional<Stock> stockOptional = stocks.stream().filter(s -> s.symbol.equals(history.symbol)).findFirst();
                 if (stockOptional.isPresent()) {
-                    stockOptional.get().yesterdaysPrice = history.daily_priceHistory.stream()
-                            .filter(sp -> sp.time != null && sp.time > yesterdayStartEpoch).findFirst().get().close;
+                    Optional<StockHistory.StockPrice> lastPriceOptional = history.daily_priceHistory.stream()
+                            .filter(sp -> sp.time != null
+                                    && sp.time > yesterdayStartEpoch
+                                    && sp.time < yesterdayEndEpoch).findFirst();
+
+                    lastPriceOptional.ifPresent(stockPrice -> stockOptional.get().yesterdaysPrice = stockPrice.close);
                     updatedStocks.add(stockOptional.get());
                 }
             } catch (Exception ex) {
