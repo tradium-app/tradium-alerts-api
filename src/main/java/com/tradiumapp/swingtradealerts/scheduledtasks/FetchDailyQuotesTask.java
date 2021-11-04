@@ -62,7 +62,6 @@ public class FetchDailyQuotesTask {
                     StockHistory stockHistory = stockHistoryOptional.orElseGet(StockHistory::new);
 
                     stock.symbol = stockPrice.symbol;
-                    if (stock.price > 0) stock.changePercent = (stockPrice.close - stock.price) * 100 / stock.price;
                     stock.price = stockPrice.close;
                     updatedStocks.add(stock);
 

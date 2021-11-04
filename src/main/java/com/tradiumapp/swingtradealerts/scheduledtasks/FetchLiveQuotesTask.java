@@ -54,7 +54,7 @@ public class FetchLiveQuotesTask {
                     Stock stock = stocks.stream().filter(s -> s.symbol.equals(entry.getKey())).findFirst().get();
                     stock.price = entry.getValue().quote.latestPrice;
                     if (stock.yesterdaysPrice != 0)
-                        stock.changePercent = (stock.price - stock.yesterdaysPrice) / stock.price;
+                        stock.changePercent = ((stock.price - stock.yesterdaysPrice) * 100) / stock.price;
                     stock.company = entry.getValue().quote.companyName;
                     stock.peRatio = entry.getValue().quote.peRatio;
                     stock.week52High = entry.getValue().quote.week52High;
