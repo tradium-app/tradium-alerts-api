@@ -8,7 +8,11 @@ public class IexNewsQuoteResponse {
 
     public class Quote {
         public String companyName;
-        public float latestPrice;
+        public float open;
+        public float high;
+        public float low;
+        public float close;
+        public float volume;
         public float peRatio;
         public float week52High;
         public float week52Low;

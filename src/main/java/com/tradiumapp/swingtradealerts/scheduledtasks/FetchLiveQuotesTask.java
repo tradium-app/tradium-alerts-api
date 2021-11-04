@@ -2,6 +2,8 @@ package com.tradiumapp.swingtradealerts.scheduledtasks;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tradiumapp.swingtradealerts.models.Stock;
+import com.tradiumapp.swingtradealerts.models.StockHistory;
+import com.tradiumapp.swingtradealerts.repositories.StockHistoryRepository;
 import com.tradiumapp.swingtradealerts.repositories.StockRepository;
 import com.tradiumapp.swingtradealerts.scheduledtasks.utilities.StockUtility;
 import com.tradiumapp.swingtradealerts.services.IexCloudService;
@@ -36,6 +38,9 @@ public class FetchLiveQuotesTask {
     private StockRepository stockRepository;
 
     @Autowired
+    private StockHistoryRepository stockHistoryRepository;
+
+    @Autowired
     private StockUtility stockUtility;
 
     @Scheduled(cron = "0 */30 9-17 * * 1-5", zone = "EST")
@@ -47,23 +52,37 @@ public class FetchLiveQuotesTask {
             Response<HashMap<String, IexNewsQuoteResponse>> response = iexService.fetchQuotes(String.join(",", symbolsInWatchList), iexToken).execute();
 
             List<Stock> stocks = stockRepository.findBySymbolIn(symbolsInWatchList);
+            List<StockHistory> stockHistories = stockHistoryRepository.findBySymbolIn(symbolsInWatchList);
+
             List<Stock> updatedStocks = new ArrayList<>();
+            List<StockHistory> updatedStockHistories = new ArrayList<>();
 
             if (response.isSuccessful() && response.body() != null) {
                 for (Map.Entry<String, IexNewsQuoteResponse> entry : response.body().entrySet()) {
                     Stock stock = stocks.stream().filter(s -> s.symbol.equals(entry.getKey())).findFirst().get();
-                    stock.price = entry.getValue().quote.latestPrice;
+
+                    IexNewsQuoteResponse.Quote quote = entry.getValue().quote;
+                    stock.price = quote.close;
                     if (stock.yesterdaysPrice != 0)
                         stock.changePercent = ((stock.price - stock.yesterdaysPrice) * 100) / stock.price;
-                    stock.company = entry.getValue().quote.companyName;
-                    stock.peRatio = entry.getValue().quote.peRatio;
-                    stock.week52High = entry.getValue().quote.week52High;
-                    stock.week52Low = entry.getValue().quote.week52Low;
+                    stock.company = quote.companyName;
+                    stock.peRatio = quote.peRatio;
+                    stock.week52High = quote.week52High;
+                    stock.week52Low = quote.week52Low;
+
+                    StockHistory stockHistory = stockHistories.stream().filter(s -> s.symbol.equals(entry.getKey())).findFirst().get();
+
+                    StockHistory.StockPrice intradayPrice = new StockHistory.StockPrice(quote.open, quote.high, quote.low, quote.close, quote.volume);
+                    if (stockHistory.intraday_priceHistory == null)
+                        stockHistory.intraday_priceHistory = new ArrayList<>();
+                    stockHistory.intraday_priceHistory.add(intradayPrice);
 
                     updatedStocks.add(stock);
+                    updatedStockHistories.add(stockHistory);
                 }
 
                 stockRepository.saveAll(updatedStocks);
+                stockHistoryRepository.saveAll(updatedStockHistories);
 
                 logger.info("FetchLiveQuotesTask ran at {}", timeFormat.format(new Date()));
             } else {

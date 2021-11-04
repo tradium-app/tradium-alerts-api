@@ -18,6 +18,7 @@ public class StockHistory {
     public String symbol;
 
     public List<StockHistory.StockPrice> daily_priceHistory;
+    public List<StockHistory.StockPrice> intraday_priceHistory;
     public List<StockHistory.StockPrice> model_predictions;
     public boolean shouldRefresh;
     public boolean isEnabled;
@@ -28,7 +29,7 @@ public class StockHistory {
     @LastModifiedDate
     public Date modifiedDate = new Date();
 
-    public class StockPrice {
+    public static class StockPrice {
         @SerializedName(value = "symbol", alternate = "T")
         public String symbol;
 
@@ -50,6 +51,14 @@ public class StockHistory {
         @SerializedName(value = "time", alternate = "t")
         public Long time;
 
-        public StockPrice(){}
+        public StockPrice() {
+        }
+
+        public StockPrice(float open, float high, float low, float close, float volume) {
+            this.open = open;
+            this.high = high;
+            this.low = low;
+            this.close = close;
+        }
     }
 }
