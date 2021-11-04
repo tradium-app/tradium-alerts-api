@@ -11,7 +11,7 @@ public class IexNewsQuoteResponse {
         public float open;
         public float high;
         public float low;
-        public float close;
+        public float latestPrice;
         public float volume;
         public float peRatio;
         public float week52High;

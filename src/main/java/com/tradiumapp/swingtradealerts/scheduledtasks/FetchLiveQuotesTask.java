@@ -62,9 +62,10 @@ public class FetchLiveQuotesTask {
                     Stock stock = stocks.stream().filter(s -> s.symbol.equals(entry.getKey())).findFirst().get();
 
                     IexNewsQuoteResponse.Quote quote = entry.getValue().quote;
-                    stock.price = quote.close;
-                    if (stock.yesterdaysPrice != 0)
+                    if (stock.yesterdaysPrice != 0 && stock.price != 0) {
+                        stock.price = quote.latestPrice;
                         stock.changePercent = ((stock.price - stock.yesterdaysPrice) * 100) / stock.price;
+                    }
                     stock.company = quote.companyName;
                     stock.peRatio = quote.peRatio;
                     stock.week52High = quote.week52High;
@@ -72,7 +73,7 @@ public class FetchLiveQuotesTask {
 
                     StockHistory stockHistory = stockHistories.stream().filter(s -> s.symbol.equals(entry.getKey())).findFirst().get();
 
-                    StockHistory.StockPrice intradayPrice = new StockHistory.StockPrice(quote.open, quote.high, quote.low, quote.close, quote.volume);
+                    StockHistory.StockPrice intradayPrice = new StockHistory.StockPrice(quote.open, quote.high, quote.low, quote.latestPrice, quote.volume);
                     if (stockHistory.intraday_priceHistory == null)
                         stockHistory.intraday_priceHistory = new ArrayList<>();
                     stockHistory.intraday_priceHistory.add(intradayPrice);

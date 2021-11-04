@@ -50,7 +50,7 @@ public class UpdateYesterdaysPriceTask implements Job {
                                     && sp.time > yesterdayStartEpoch
                                     && sp.time < yesterdayEndEpoch).findFirst();
 
-                    if (lastPriceOptional.isPresent()) {
+                    if (lastPriceOptional.isPresent() && stockOptional.get().price != 0) {
                         stockOptional.get().yesterdaysPrice = lastPriceOptional.get().close;
                         stockOptional.get().changePercent = ((stockOptional.get().price - stockOptional.get().yesterdaysPrice) * 100) / stockOptional.get().price;
                     }
