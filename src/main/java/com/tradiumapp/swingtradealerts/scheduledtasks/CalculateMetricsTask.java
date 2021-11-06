@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @QuartzJob
 public class CalculateMetricsTask implements Job {
-    private static final Logger logger = LoggerFactory.getLogger(FetchAllStocksTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(CalculateMetricsTask.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
@@ -48,11 +48,13 @@ public class CalculateMetricsTask implements Job {
 
         for (StockHistory history : stockHistories) {
             try {
-                if (history.daily_priceHistory == null || history.daily_priceHistory.size() < 30) continue;
+                if (history.daily_priceHistory == null) continue;
 
                 List<StockHistory.StockPrice> stockPrices = history.daily_priceHistory.stream()
                         .filter(stockPrice -> stockPrice.time != null && stockPrice.time > startEpoch)
                         .collect(Collectors.toList());
+
+                if(stockPrices.size() < 30) continue;
 
                 BarSeries series = new BaseBarSeriesBuilder().build();
 
