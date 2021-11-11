@@ -52,7 +52,7 @@ public class SecurityConfig {
         serializer.setCookiePath("/");
         serializer.setSameSite("None");
         serializer.setUseSecureCookie(true);
-        serializer.setCookieMaxAge(7 * 24 * 60 * 60);
+        serializer.setCookieMaxAge(10 * 365 * 24 * 60 * 60);
         return serializer;
     }
 
