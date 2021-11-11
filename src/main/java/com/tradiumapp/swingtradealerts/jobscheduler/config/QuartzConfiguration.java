@@ -37,7 +37,7 @@ public class QuartzConfiguration {
         properties.setProperty("org.quartz.jobStore.collectionPrefix", "quartz_");
         properties.setProperty("org.quartz.threadPool.threadCount", "2");
         properties.setProperty("org.quartz.jobStore.isClustered", "true");
-        properties.setProperty("org.quartz.scheduler.instanceId", "AUTO");
+        properties.setProperty("org.quartz.scheduler.instanceId", "quartzMongoInstance");
         properties.setProperty("org.quartz.scheduler.instanceName", "quartzMongoInstance");
         properties.setProperty("org.quartz.jobStore.misfireThreshold", "1800000");
 
