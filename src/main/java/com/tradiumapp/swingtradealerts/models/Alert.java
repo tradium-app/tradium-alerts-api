@@ -11,6 +11,7 @@ import java.util.List;
 public class Alert {
     @Id
     public ObjectId id;
+    public String copiedFromId;
 
     public String userId;
     public String symbol;

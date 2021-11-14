@@ -105,22 +105,27 @@ public class AlertMutation implements GraphQLMutationResolver {
 
     @PreAuthorize("hasAuthority(T(com.tradiumapp.swingtradealerts.auth.PermissionDefinition).ALERT.id)")
     public Response copyAlertToAllStocks(final String alertId) {
-        Alert alert = alertRepository.findById(new ObjectId(alertId)).get();
-
         String userId = PrincipalManager.getCurrentUserId();
         User user = userRepository.findById(new ObjectId(userId)).get();
+
+        List<Alert> alerts = alertRepository.findByUserId(userId);
+        Alert originalAlert = alerts.stream().filter(a -> a.id.equals(new ObjectId(alertId))).findFirst().get();
 
         List<Alert> newAlerts = new ArrayList<>();
 
         for (String symbol : user.watchList) {
-            if (!symbol.equals(alert.symbol)) {
+            boolean alertCopied = alerts.stream().anyMatch(a -> a.symbol.equals(symbol)
+                    && a.copiedFromId != null
+                    && a.copiedFromId.equals(alertId));
+            if (!symbol.equals(originalAlert.symbol) && !alertCopied) {
                 Alert newAlert = new Alert();
+                newAlert.copiedFromId = alertId;
                 newAlert.userId = userId;
                 newAlert.symbol = symbol;
-                newAlert.signal = alert.signal;
+                newAlert.signal = originalAlert.signal;
                 newAlert.status = Alert.AlertStatus.Off;
-                newAlert.title = alert.title + " [copy]";
-                newAlert.conditions = alert.conditions;
+                newAlert.title = originalAlert.title + " [copy]";
+                newAlert.conditions = originalAlert.conditions;
 
                 newAlerts.add(newAlert);
             }

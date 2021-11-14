@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface AlertRepository extends PagingAndSortingRepository<Alert, ObjectId> {
     List<Alert> findByEnabled(boolean enabled);
+    List<Alert> findByUserId(String userId);
 }
