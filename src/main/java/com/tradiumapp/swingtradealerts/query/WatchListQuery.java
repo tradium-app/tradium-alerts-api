@@ -72,9 +72,7 @@ public class WatchListQuery implements GraphQLQueryResolver {
                 }};
 
                 try {
-                    stock.recentClosePrices = stockHistories.stream()
-                            .filter(h -> h.symbol.equals(stock.symbol))
-                            .findFirst().get()
+                    stock.recentClosePrices = stockHistory
                             .daily_priceHistory.stream()
                             .filter(p -> p.time != null && p.time > days60Ago)
                             .sorted(Comparator.comparing(p -> p.time))
@@ -84,11 +82,17 @@ public class WatchListQuery implements GraphQLQueryResolver {
                 }
 
                 try {
-                    stock.nextPredictions = stockHistories.stream()
-                            .filter(h -> h.symbol.equals(stock.symbol))
-                            .findFirst().get()
+                    stock.nextPredictions = stockHistory
                             .model_predictions.stream()
                             .sorted(Comparator.comparing(p -> p.time))
+                            .map(p -> p.close)
+                            .collect(Collectors.toList());
+                } catch (Exception ignored) {
+                }
+
+                try {
+                    stock.nextPredictions2 = stockHistory
+                            .model_predictions_2.stream()
                             .map(p -> p.close)
                             .collect(Collectors.toList());
                 } catch (Exception ignored) {

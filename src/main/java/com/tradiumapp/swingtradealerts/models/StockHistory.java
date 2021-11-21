@@ -20,6 +20,8 @@ public class StockHistory {
     public List<StockHistory.StockPrice> daily_priceHistory;
     public List<StockHistory.StockPrice> intraday_priceHistory;
     public List<StockHistory.StockPrice> model_predictions;
+    public List<StockHistory.StockPrice> model_predictions_2;
+
     public boolean shouldRefresh;
     public boolean isEnabled;
 

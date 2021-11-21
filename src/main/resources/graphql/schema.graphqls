@@ -27,6 +27,7 @@ type Stock {
     yesterdaysPrice: Float
     recentClosePrices: [Float]
     nextPredictions: [Float]
+    nextPredictions2: [Float]
     changePercent: Float
     marketCap: Float
     peRatio: Float

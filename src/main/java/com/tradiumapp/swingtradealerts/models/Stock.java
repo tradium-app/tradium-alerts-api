@@ -55,6 +55,9 @@ public class Stock {
     @Transient
     public List<Float> nextPredictions;
 
+    @Transient
+    public List<Float> nextPredictions2;
+
     public float revenueGrowthQuarterlyYoy;
     public float revenueGrowthTTMYoy;
 
