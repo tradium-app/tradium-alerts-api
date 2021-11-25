@@ -6,7 +6,7 @@ import org.ta4j.core.indicators.helpers.PriceIndicator;
 import static java.lang.Math.abs;
 
 public abstract class ConditionChecker {
-    public abstract boolean checkCondition(Condition condition, PriceIndicator priceIndicator);
+    public abstract boolean checkCondition(Condition condition, PriceIndicator priceIndicator) throws Exception;
 
     public boolean compareNumbers(Condition.Operator operator, float value1, float value2, float diff_percent) {
         if (operator == Condition.Operator.above) {

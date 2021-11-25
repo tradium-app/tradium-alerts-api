@@ -133,11 +133,15 @@ public class SendAlertTask {
         return stockPricesMap;
     }
 
-    private boolean isConditionMet(Stock stock, Condition condition, BarSeries series) {
+    private boolean isConditionMet(Stock stock, Condition condition, BarSeries series) throws Exception {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         ConditionChecker conditionChecker;
         if (condition.indicator1.equals(IndicatorType.price)) {
             conditionChecker = new PriceConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.price_by_sales_ttm)) {
+            conditionChecker = new PriceSalesConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.rev_growth_ttm)) {
+            conditionChecker = new RevGrowthConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.rsi)) {
             conditionChecker = new RSIConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.sma)) {
