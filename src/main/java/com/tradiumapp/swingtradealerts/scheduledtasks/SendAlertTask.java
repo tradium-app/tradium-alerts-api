@@ -142,6 +142,8 @@ public class SendAlertTask {
             conditionChecker = new PriceSalesConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.rev_growth_ttm)) {
             conditionChecker = new RevGrowthConditionChecker(stock);
+        } else if (condition.indicator1.equals(IndicatorType.reward_risk_ratio)) {
+            conditionChecker = new RewardRiskConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.rsi)) {
             conditionChecker = new RSIConditionChecker(stock);
         } else if (condition.indicator1.equals(IndicatorType.sma)) {
