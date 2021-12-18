@@ -21,8 +21,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
-import javax.servlet.http.HttpServletResponse;
-
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
@@ -48,7 +46,7 @@ public class SecurityConfig {
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        serializer.setCookieName("S-SESSIONID");
+        serializer.setCookieName("T-SESSIONID");
         serializer.setCookiePath("/");
         serializer.setSameSite("None");
         serializer.setUseSecureCookie(true);
@@ -66,17 +64,26 @@ public class SecurityConfig {
                     .addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class)
                     .csrf().disable()
                     .sessionManagement().and()
-                    .authorizeRequests().anyRequest().permitAll();
+                    .authorizeRequests().anyRequest().authenticated().and()
+                    .exceptionHandling().authenticationEntryPoint(new AppAuthenticationEntryPoint());
+//                    .exceptionHandling().accessDeniedHandler(new AppAccessDeniedHandler());
+//                    .and()
+//                    .addFilterAfter(new AccessDeniedExceptionFilter(), FirebaseFilter.class);
 
-            http
-                    .logout()
-                    .permitAll()
-                    .logoutUrl("/perform_logout")
-                    .logoutSuccessHandler((request, response, authentication) -> {
-                                response.setStatus(HttpServletResponse.SC_OK);
-                            }
-                    )
-            .deleteCookies("S-SESSIONID");
+
+//            .anyRequest().permitAll().and()
+//                    .exceptionHandling()
+//                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+
+//            http
+//                    .logout()
+//                    .permitAll()
+//                    .logoutUrl("/perform_logout")
+//                    .logoutSuccessHandler((request, response, authentication) -> {
+//                                response.setStatus(HttpServletResponse.SC_OK);
+//                            }
+//                    )
+//                    .deleteCookies("T-SESSIONID");
         }
 
         @Autowired(required = false)
